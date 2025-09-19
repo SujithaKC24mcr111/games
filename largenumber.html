@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Large Numbers Learning Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 900px;
+            overflow: hidden;
+        }
+        
+        header {
+            background: #4e54c8;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        
+        .number-display {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .main-number {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #4e54c8;
+            margin-bottom: 15px;
+        }
+        
+        .number-words {
+            font-size: 1.4rem;
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+        
+        .breakdown {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .digit-box {
+            background: #4e54c8;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        
+        .digit-label {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            text-align: center;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #4e54c8;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-generate {
+            background: #4e54c8;
+        }
+        
+        .btn-lakh {
+            background: #ff6b6b;
+        }
+        
+        .btn-crore {
+            background: #ff9f43;
+        }
+        
+        .btn-place {
+            background: #0abde3;
+        }
+        
+        .explanation {
+            background: #e3f2fd;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #4e54c8;
+        }
+        
+        .explanation h3 {
+            color: #4e54c8;
+            margin-bottom: 15px;
+        }
+        
+        .examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .example-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9ecef;
+        }
+        
+        .example-card h4 {
+            color: #4e54c8;
+            margin-bottom: 10px;
+        }
+        
+        .visualization {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .coins {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .coin {
+            width: 40px;
+            height: 40px;
+            background: #ff9f43;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .groups {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 15px 0;
+        }
+        
+        .group {
+            padding: 15px;
+            background: #4e54c8;
+            color: white;
+            border-radius: 10px;
+            min-width: 100px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .main-number {
+                font-size: 2.5rem;
+            }
+            
+            .number-words {
+                font-size: 1.1rem;
+            }
+            
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .breakdown {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .digit-box {
+                width: 80%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .main-number {
+                font-size: 2rem;
+            }
+            
+            .btn {
+                padding: 12px;
+                font-size: 1rem;
+            }
+            
+            .examples {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .highlight {
+            background: #fff9c4;
+            padding: 3px 5px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Large Numbers Adventure</h1>
+            <p class="subtitle">Learn about 5-digit numbers, Lakhs, and Crores</p>
+        </header>
+        
+        <div class="game-area">
+            <div class="number-display">
+                <div class="main-number" id="mainNumber">45,321</div>
+                <div class="number-words" id="numberWords">Forty-five thousand three hundred twenty-one</div>
+                
+                <div class="breakdown">
+                    <div>
+                        <div class="digit-box">5</div>
+                        <div class="digit-label">Ten Thousands</div>
+                    </div>
+                    <div>
+                        <div class="digit-box">4</div>
+                        <div class="digit-label">Thousands</div>
+                    </div>
+                    <div>
+                        <div class="digit-box">3</div>
+                        <div class="digit-label">Hundreds</div>
+                    </div>
+                    <div>
+                        <div class="digit-box">2</div>
+                        <div class="digit-label">Tens</div>
+                    </div>
+                    <div>
+                        <div class="digit-box">1</div>
+                        <div class="digit-label">Ones</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn btn-generate" onclick="generateNumber()">Generate New Number</button>
+                <button class="btn btn-lakh" onclick="explainLakh()">What is a Lakh?</button>
+                <button class="btn btn-crore" onclick="explainCrore()">What is a Crore?</button>
+                <button class="btn btn-place" onclick="explainPlaceValue()">Place Values</button>
+            </div>
+            
+            <div class="explanation" id="explanation">
+                <h3>Understanding Large Numbers</h3>
+                <p>Numbers help us count, measure, and compare things. When numbers get bigger, we need special ways to read and understand them.</p>
+                <p>In the Indian numbering system, we use terms like <span class="highlight">Lakh</span> (1,00,000) and <span class="highlight">Crore</span> (1,00,00,000) to make large numbers easier to read.</p>
+            </div>
+            
+            <div class="examples">
+                <div class="example-card">
+                    <h4>5-Digit Numbers</h4>
+                    <p>10,000 to 99,999 are five-digit numbers.</p>
+                    <p>Example: <strong>45,321</strong> is forty-five thousand three hundred twenty-one.</p>
+                </div>
+                <div class="example-card">
+                    <h4>Lakh (1,00,000)</h4>
+                    <p>1 Lakh = 100,000 = One hundred thousand</p>
+                    <p>Example: <strong>3,50,000</strong> is three lakh fifty thousand.</p>
+                </div>
+                <div class="example-card">
+                    <h4>Crore (1,00,00,000)</h4>
+                    <p>1 Crore = 10,000,000 = Ten million</p>
+                    <p>Example: <strong>2,30,00,000</strong> is two crore thirty lakh.</p>
+                </div>
+            </div>
+            
+            <div class="visualization">
+                <h3>Visualizing 1 Lakh</h3>
+                <p>Imagine each coin represents 10,000. How many coins make 1 Lakh?</p>
+                <div class="coins" id="coinsContainer">
+                    <!-- Coins will be generated by JavaScript -->
+                </div>
+                <p>10 coins × 10,000 = 1,00,000 (1 Lakh)</p>
+                
+                <div class="groups">
+                    <div class="group">
+                        10,000
+                    </div>
+                    <div class="group">
+                        10,000
+                    </div>
+                    <div class="group">
+                        10,000
+                    </div>
+                    <div class="group">
+                        10,000
+                    </div>
+                    <div class="group">
+                        10,000
+                    </div>
+                </div>
+                <div class="groups">
+                    <div class="group">
+                        10,000
+                    </div>
+                    <div class="group">
+                        10,000
+                    </div>
+                    <div class="group">
+                        10,000
+                    </div>
+                    <div class="group">
+                        10,000
+                    </div>
+                    <div class="group">
+                        10,000
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Made with ❤️ for learning mathematics | Large Numbers Adventure</p>
+        </footer>
+    </div>
+
+    <script>
+        // Number generation and conversion functions
+        function generateNumber() {
+            // Generate a random number between 10,000 and 99,999
+            const number = Math.floor(Math.random() * 90000) + 10000;
+            displayNumber(number);
+        }
+        
+        function displayNumber(num) {
+            // Format number with commas
+            const formattedNumber = num.toLocaleString('en-IN');
+            document.getElementById('mainNumber').textContent = formattedNumber;
+            
+            // Convert number to words
+            document.getElementById('numberWords').textContent = convertNumberToWords(num);
+            
+            // Update digit boxes
+            const digits = String(num).split('');
+            const digitBoxes = document.querySelectorAll('.digit-box');
+            
+            for (let i = 0; i < digitBoxes.length; i++) {
+                if (i < digits.length) {
+                    digitBoxes[i].textContent = digits[i];
+                } else {
+                    digitBoxes[i].textContent = "0";
+                }
+            }
+            
+            // Reset explanation
+            document.getElementById('explanation').innerHTML = `
+                <h3>Understanding ${formattedNumber}</h3>
+                <p>This is a <span class="highlight">5-digit number</span>. Each digit has a specific place value.</p>
+                <p>From right to left: Ones, Tens, Hundreds, Thousands, and Ten Thousands.</p>
+                <p>In the Indian numbering system, we'll soon learn about Lakhs and Crores for even larger numbers!</p>
+            `;
+        }
+        
+        function convertNumberToWords(num) {
+            // Simple number to words conversion for demo purposes
+            // A full implementation would require a more complex function
+            const ones = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+            const teens = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+            const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+            
+            if (num === 0) return 'zero';
+            
+            let words = '';
+            
+            // Handle ten thousands and thousands
+            if (num >= 1000) {
+                const thousands = Math.floor(num / 1000);
+                if (thousands >= 20) {
+                    words += tens[Math.floor(thousands / 10)] + ' ';
+                    words += ones[thousands % 10] + ' ';
+                } else if (thousands >= 10) {
+                    words += teens[thousands - 10] + ' ';
+                } else {
+                    words += ones[thousands] + ' ';
+                }
+                words += 'thousand ';
+                num %= 1000;
+            }
+            
+            // Handle hundreds
+            if (num >= 100) {
+                words += ones[Math.floor(num / 100)] + ' hundred ';
+                num %= 100;
+            }
+            
+            // Handle tens and ones
+            if (num >= 20) {
+                words += tens[Math.floor(num / 10)] + ' ';
+                num %= 10;
+            } else if (num >= 10) {
+                words += teens[num - 10] + ' ';
+                num = 0;
+            }
+            
+            if (num > 0) {
+                words += ones[num] + ' ';
+            }
+            
+            return words.trim() + ' (Indian format: ' + formatIndian(num) + ')';
+        }
+        
+        function formatIndian(num) {
+            // This would normally format in lakhs/crores, but for 5-digit numbers we use thousands
+            return Math.floor(num/1000) + ',' + (num % 1000);
+        }
+        
+        function explainLakh() {
+            document.getElementById('explanation').innerHTML = `
+                <h3>What is a Lakh?</h3>
+                <p>A <span class="highlight">Lakh</span> (1,00,000) is equal to one hundred thousand (100,000).</p>
+                <p>It's written with a comma after the first three digits from the right, then after every two digits.</p>
+                <p>Examples:</p>
+                <ul>
+                    <li>1,00,000 = One Lakh</li>
+                    <li>5,00,000 = Five Lakh</li>
+                    <li>9,99,999 = Nine Lakh Ninety-Nine Thousand Nine Hundred Ninety-Nine</li>
+                </ul>
+                <p>Lakh is commonly used in India, Pakistan, Bangladesh, Nepal, and Sri Lanka.</p>
+            `;
+        }
+        
+        function explainCrore() {
+            document.getElementById('explanation').innerHTML = `
+                <h3>What is a Crore?</h3>
+                <p>A <span class="highlight">Crore</span> (1,00,00,000) is equal to ten million (10,000,000).</p>
+                <p>It's written with commas after the first three digits from the right, then after every two digits.</p>
+                <p>Examples:</p>
+                <ul>
+                    <li>1,00,00,000 = One Crore</li>
+                    <li>7,50,00,000 = Seven Crore Fifty Lakh</li>
+                    <li>10,00,00,000 = Ten Crore</li>
+                </ul>
+                <p>1 Crore = 100 Lakh = 10,000,000</p>
+            `;
+        }
+        
+        function explainPlaceValue() {
+            document.getElementById('explanation').innerHTML = `
+                <h3>Place Values in Large Numbers</h3>
+                <p>Each digit in a number has a specific value based on its position.</p>
+                <p>For the number <span class="highlight">45,321</span>:</p>
+                <ul>
+                    <li><strong>5</strong> is in the Ten Thousands place → 5 × 10,000 = 50,000</li>
+                    <li><strong>4</strong> is in the Thousands place → 4 × 1,000 = 4,000</li>
+                    <li><strong>3</strong> is in the Hundreds place → 3 × 100 = 300</li>
+                    <li><strong>2</strong> is in the Tens place → 2 × 10 = 20</li>
+                    <li><strong>1</strong> is in the Ones place → 1 × 1 = 1</li>
+                </ul>
+                <p>When we add these together: 50,000 + 4,000 + 300 + 20 + 1 = 54,321</p>
+                <p>For larger numbers, we have Lakhs (100,000) and Crores (10,000,000).</p>
+            `;
+        }
+        
+        // Initialize the game with a number
+        window.onload = function() {
+            generateNumber();
+            
+            // Create coins for visualization
+            const coinsContainer = document.getElementById('coinsContainer');
+            for (let i = 0; i < 10; i++) {
+                const coin = document.createElement('div');
+                coin.className = 'coin';
+                coin.textContent = '10K';
+                coinsContainer.appendChild(coin);
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buoyancy Game | Archimedes' Principle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        header {
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .logo-icon {
+            font-size: 2.5rem;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+        
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        
+        .game-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .canvas-container {
+            flex: 2;
+            min-width: 300px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        #buoyancyCanvas {
+            background: #fff;
+            border-radius: 8px;
+            display: block;
+            margin: 0 auto;
+            border: 2px solid #3498db;
+            cursor: pointer;
+        }
+        
+        .objects {
+            flex: 1;
+            min-width: 250px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .object-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .object-item {
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            cursor: grab;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            user-select: none;
+        }
+        
+        .object-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+        }
+        
+        .object-icon {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        
+        .custom-object {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .custom-object input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .custom-object button {
+            padding: 8px 12px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .custom-object button:hover {
+            background: #2980b9;
+        }
+        
+        .liquid-selector {
+            margin-bottom: 15px;
+        }
+        
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        #resetBtn {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        #resetBtn:hover {
+            background: #c0392b;
+        }
+        
+        .buoyancy-info {
+            display: flex;
+            justify-content: space-around;
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .info-item {
+            text-align: center;
+        }
+        
+        .info-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #f1c40f;
+        }
+        
+        .concept-explanation {
+            background: #e8f4fc;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #3498db;
+        }
+        
+        .concept-explanation h3 {
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #2c3e50;
+            color: white;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .game-container {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .object-list {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">🌊</div>
+                <div>
+                    <h1>Buoyancy Game</h1>
+                    <div class="subtitle">Drop objects into liquids and observe Archimedes' Principle</div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="game-area">
+            <div class="game-container">
+                <div class="canvas-container">
+                    <h2>Liquid Tank</h2>
+                    <canvas id="buoyancyCanvas" width="600" height="400"></canvas>
+                    <div class="buoyancy-info">
+                        <div class="info-item">
+                            <div>Buoyant Force</div>
+                            <div class="info-value" id="buoyantValue">0 N</div>
+                        </div>
+                        <div class="info-item">
+                            <div>Weight</div>
+                            <div class="info-value" id="weightValue">0 N</div>
+                        </div>
+                        <div class="info-item">
+                            <div>Net Force</div>
+                            <div class="info-value" id="netValue">0 N</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="objects">
+                    <h2>Objects (Drag to Drop)</h2>
+                    <p>Select liquid, then drag objects or add custom</p>
+                    
+                    <div class="liquid-selector">
+                        <label for="liquidSelect">Choose Liquid:</label>
+                        <select id="liquidSelect">
+                            <option value="1.0">Water (1.0 g/cm³)</option>
+                            <option value="0.9">Oil (0.9 g/cm³)</option>
+                            <option value="13.6">Mercury (13.6 g/cm³)</option>
+                            <option value="1.03">Saltwater (1.03 g/cm³)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="object-list">
+                        <div class="object-item" data-density="0.5">
+                            <div class="object-icon">🌲</div>
+                            <div>Wood (0.5 g/cm³)</div>
+                        </div>
+                        <div class="object-item" data-density="1.0">
+                            <div class="object-icon">💧</div>
+                            <div>Ice (1.0 g/cm³)</div>
+                        </div>
+                        <div class="object-item" data-density="2.7">
+                            <div class="object-icon">🏔️</div>
+                            <div>Aluminum (2.7 g/cm³)</div>
+                        </div>
+                        <div class="object-item" data-density="7.8">
+                            <div class="object-icon">🔩</div>
+                            <div>Iron (7.8 g/cm³)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="custom-object">
+                        <input type="number" id="customDensity" placeholder="Custom Density (g/cm³)" step="0.1" min="0.1" max="20">
+                        <button id="addCustom">Add Custom</button>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button id="resetBtn">Reset Tank</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="concept-explanation">
+                <h3>Archimedes' Principle</h3>
+                <p>The buoyant force on an object is equal to the weight of the fluid displaced by the object.</p>
+                <ul>
+                    <li><strong>Float</strong>: If density < liquid, buoyant force > weight</li>
+                    <li><strong>Sink</strong>: If density > liquid, buoyant force < weight (with bubbles!)</li>
+                    <li><strong>Neutral</strong>: If equal, forces balance</li>
+                    <li>Visual: Blue arrow (buoyant up), red arrow (weight down), water level rises with displacement</li>
+                </ul>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Gamified STEM Learning Platform | Developed for Educational Purposes</p>
+        </footer>
+    </div>
+
+    <script>
+        // DOM Elements
+        const canvas = document.getElementById('buoyancyCanvas');
+        const ctx = canvas.getContext('2d');
+        const resetBtn = document.getElementById('resetBtn');
+        const buoyantValue = document.getElementById('buoyantValue');
+        const weightValue = document.getElementById('weightValue');
+        const netValue = document.getElementById('netValue');
+        const objectItems = document.querySelectorAll('.object-item');
+        const liquidSelect = document.getElementById('liquidSelect');
+        const customDensity = document.getElementById('customDensity');
+        const addCustom = document.getElementById('addCustom');
+        
+        // Constants
+        let INITIAL_WATER_LEVEL = canvas.height * 0.6;
+        let LIQUID_DENSITY = 1.0; // g/cm³
+        const G = 9.81; // m/s² (scaled for sim)
+        const SCALE = 0.1; // Scale forces for visibility
+        
+        // Game variables
+        let objects = [];
+        let selectedObject = null;
+        let animationFrameId;
+        let waterLevel = INITIAL_WATER_LEVEL;
+        
+        // Bubble class
+        class Bubble {
+            constructor(x, y) {
+                this.x = x + Math.random() * 10 - 5;
+                this.y = y + Math.random() * 10;
+                this.radius = Math.random() * 3 + 1;
+                this.vy = -Math.random() * 2 - 1;
+            }
+            
+            update() {
+                this.y += this.vy;
+                this.radius *= 0.99;
+            }
+            
+            draw() {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        // Object class
+        class BuoyancyObject {
+            constructor(density, x, y) {
+                this.density = density;
+                this.x = x;
+                this.y = y;
+                this.radius = 20;
+                this.vy = 0;
+                this.volume = Math.PI * this.radius ** 2; // Assume 2D circle for simplicity
+                this.mass = this.density * this.volume;
+                this.weight = this.mass * G;
+                this.buoyantForce = 0;
+                this.netForce = 0;
+                this.color = this.getColor();
+                this.bubbles = [];
+            }
+            
+            getColor() {
+                if (this.density < LIQUID_DENSITY) return '#27ae60'; // Green for float
+                if (this.density > LIQUID_DENSITY) return '#c0392b'; // Red for sink
+                return '#f39c12'; // Orange for neutral
+            }
+            
+            update() {
+                // Calculate immersion
+                const submergedDepth = Math.max(0, Math.min(this.radius * 2, waterLevel + this.radius - this.y));
+                const submergedVolume = this.calculateSubmergedVolume(submergedDepth);
+                
+                this.buoyantForce = LIQUID_DENSITY * submergedVolume * G;
+                this.netForce = this.weight - this.buoyantForce;
+                
+                // Apply forces
+                const acceleration = this.netForce / this.mass;
+                this.vy += acceleration * 0.01; // Time step
+                this.vy *= 0.98; // Drag
+                
+                this.y += this.vy;
+                
+                // Boundaries
+                if (this.y + this.radius > canvas.height) {
+                    this.y = canvas.height - this.radius;
+                    this.vy = 0;
+                }
+                if (this.y - this.radius < 0) {
+                    this.y = this.radius;
+                    this.vy = 0;
+                }
+                
+                // Floating equilibrium
+                if (this.density < LIQUID_DENSITY && Math.abs(this.vy) < 0.1 && this.y > waterLevel - this.radius * 2) {
+                    const floatDepth = (this.density / LIQUID_DENSITY) * this.radius * 2;
+                    this.y = waterLevel + floatDepth - this.radius * 2;
+                    this.vy = 0;
+                }
+                
+                // Generate bubbles if sinking
+                if (this.netForce > 0 && this.y + this.radius > waterLevel) {
+                    if (Math.random() < 0.2) {
+                        this.bubbles.push(new Bubble(this.x, this.y + this.radius));
+                    }
+                }
+                
+                // Update bubbles
+                this.bubbles = this.bubbles.filter(b => b.y > waterLevel && b.radius > 0.1);
+                this.bubbles.forEach(b => b.update());
+            }
+            
+            calculateSubmergedVolume(depth) {
+                if (depth <= 0) return 0;
+                if (depth >= this.radius * 2) return this.volume;
+                
+                const h = depth - this.radius;
+                return this.radius ** 2 * Math.acos((this.radius - depth) / this.radius) -
+                       (this.radius - depth) * Math.sqrt(2 * this.radius * depth - depth ** 2);
+            }
+            
+            getSubmergedVolume() {
+                const submergedDepth = Math.max(0, Math.min(this.radius * 2, waterLevel + this.radius - this.y));
+                return this.calculateSubmergedVolume(submergedDepth);
+            }
+            
+            draw() {
+                // Draw object
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw bubbles
+                this.bubbles.forEach(b => b.draw());
+                
+                // Draw forces if in liquid
+                if (this.y + this.radius > waterLevel) {
+                    // Weight arrow (down, red)
+                    const weightArrowLength = this.weight * SCALE;
+                    ctx.strokeStyle = '#e74c3c';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(this.x + this.radius + 10, this.y);
+                    ctx.lineTo(this.x + this.radius + 10, this.y + weightArrowLength);
+                    ctx.moveTo(this.x + this.radius + 5, this.y + weightArrowLength - 5);
+                    ctx.lineTo(this.x + this.radius + 10, this.y + weightArrowLength);
+                    ctx.moveTo(this.x + this.radius + 15, this.y + weightArrowLength - 5);
+                    ctx.lineTo(this.x + this.radius + 10, this.y + weightArrowLength);
+                    ctx.stroke();
+                    ctx.fillStyle = '#e74c3c';
+                    ctx.font = '12px Arial';
+                    ctx.fillText('Weight', this.x + this.radius + 20, this.y + weightArrowLength / 2);
+                    
+                    // Buoyant arrow (up, blue)
+                    const buoyantArrowLength = this.buoyantForce * SCALE;
+                    ctx.strokeStyle = '#3498db';
+                    ctx.beginPath();
+                    ctx.moveTo(this.x - this.radius - 10, this.y);
+                    ctx.lineTo(this.x - this.radius - 10, this.y - buoyantArrowLength);
+                    ctx.moveTo(this.x - this.radius - 15, this.y - buoyantArrowLength + 5);
+                    ctx.lineTo(this.x - this.radius - 10, this.y - buoyantArrowLength);
+                    ctx.moveTo(this.x - this.radius - 5, this.y - buoyantArrowLength + 5);
+                    ctx.lineTo(this.x - this.radius - 10, this.y - buoyantArrowLength);
+                    ctx.stroke();
+                    ctx.fillStyle = '#3498db';
+                    ctx.fillText('Buoyant', this.x - this.radius - 60, this.y - buoyantArrowLength / 2);
+                }
+            }
+        }
+        
+        // Initialize
+        function init() {
+            drawScene();
+            animate();
+            
+            objectItems.forEach(item => {
+                item.addEventListener('mousedown', (e) => {
+                    selectedObject = {
+                        density: parseFloat(item.getAttribute('data-density')),
+                        offsetX: e.clientX - item.getBoundingClientRect().left,
+                        offsetY: e.clientY - item.getBoundingClientRect().top
+                    };
+                    document.addEventListener('mousemove', handleDrag);
+                    document.addEventListener('mouseup', handleDrop);
+                });
+            });
+            
+            liquidSelect.addEventListener('change', () => {
+                LIQUID_DENSITY = parseFloat(liquidSelect.value);
+            });
+            
+            addCustom.addEventListener('click', () => {
+                const density = parseFloat(customDensity.value);
+                if (density > 0) {
+                    const x = Math.random() * (canvas.width - 100) + 50;
+                    const y = 50;
+                    objects.push(new BuoyancyObject(density, x, y));
+                    customDensity.value = '';
+                }
+            });
+            
+            resetBtn.addEventListener('click', () => {
+                objects = [];
+                buoyantValue.textContent = '0 N';
+                weightValue.textContent = '0 N';
+                netValue.textContent = '0 N';
+                waterLevel = INITIAL_WATER_LEVEL;
+            });
+        }
+        
+        // Handle drag
+        function handleDrag(e) {
+            if (selectedObject) {
+                // Preview position (optional)
+            }
+        }
+        
+        // Handle drop
+        function handleDrop(e) {
+            document.removeEventListener('mousemove', handleDrag);
+            document.removeEventListener('mouseup', handleDrop);
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            if (x > 0 && x < canvas.width && y > 0 && y < canvas.height) {
+                objects.push(new BuoyancyObject(selectedObject.density, x, y));
+            }
+            
+            selectedObject = null;
+        }
+        
+        // Draw scene
+        function drawScene() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw liquid
+            ctx.fillStyle = 'rgba(52, 152, 219, 0.5)';
+            ctx.fillRect(0, waterLevel, canvas.width, canvas.height - waterLevel);
+            
+            // Draw objects
+            objects.forEach(obj => obj.draw());
+        }
+        
+        // Animate
+        function animate() {
+            let totalDisplaced = 0;
+            objects.forEach(obj => {
+                obj.update();
+                if (obj.y + obj.radius > waterLevel) {
+                    totalDisplaced += obj.getSubmergedVolume();
+                }
+            });
+            
+            waterLevel = INITIAL_WATER_LEVEL + totalDisplaced / canvas.width;
+            
+            // Update info (last object)
+            if (objects.length > 0) {
+                const lastObj = objects[objects.length - 1];
+                buoyantValue.textContent = `${lastObj.buoyantForce.toFixed(2)} N`;
+                weightValue.textContent = `${lastObj.weight.toFixed(2)} N`;
+                netValue.textContent = `${lastObj.netForce.toFixed(2)} N`;
+            }
+            
+            drawScene();
+            animationFrameId = requestAnimationFrame(animate);
+        }
+        
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

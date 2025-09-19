@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Science Detective — HTML Version</title>
+<style>
+  :root{--bg:#082233;--card:#f8fbff;--accent:#ffd166;}
+  body{margin:0;font-family:Inter, "Noto Sans", Arial;color:#07203a;background:linear-gradient(180deg,#071b13,#05283a);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
+  .app{width:100%;max-width:1100px;background:linear-gradient(180deg,#072e3c,#053246);border-radius:12px;padding:18px;color:white;box-shadow:0 14px 36px rgba(0,0,0,0.6)}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  header h1{margin:0;font-size:22px}
+  .top-right{font-size:14px;color:#cfefff}
+  .stage{margin-top:18px;background:rgba(255,255,255,0.97);color:#07203a;border-radius:10px;padding:16px;min-height:420px}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  button.btn{background:var(--accent);border:none;padding:8px 14px;border-radius:10px;font-weight:700;cursor:pointer}
+  .row{display:flex;gap:12px;align-items:flex-start}
+  .box{flex:1;padding:12px;background:#eaf7ff;border-radius:8px;min-height:120px}
+  .draggable{background:#fff;padding:8px;border-radius:8px;border:2px dashed #c8e8ff;margin-bottom:8px;cursor:grab}
+  .dropzone{background:#f3f8fb;border:2px dashed #b8e1ff;padding:12px;border-radius:8px;min-height:80px}
+  canvas{max-width:100%;height:auto;border-radius:8px;background:#fff}
+  .center{text-align:center}
+  @media (max-width:720px){ .row{flex-direction:column} }
+</style>
+</head>
+<body>
+
+<div class="app" role="application" aria-label="Science Detective HTML game">
+  <header>
+    <h1>Science Detective — Nature of Science (Biology)</h1>
+    <div class="top-right">Score: <span id="score">0</span></div>
+  </header>
+
+  <div class="controls" id="nav">
+    <button class="btn" id="toObs">Observation</button>
+    <button class="btn" id="toExp">Experiment Setup</button>
+    <button class="btn" id="toData">Data Interpretation</button>
+    <button class="btn" id="reset" style="background:#cfefff;color:#07203a">Restart</button>
+  </div>
+
+  <div class="stage" id="stage">
+    <!-- content injected -->
+  </div>
+</div>
+
+<script>
+/* Minimal interactive HTML version */
+const stage = document.getElementById('stage');
+const scoreEl = document.getElementById('score');
+let score = 0;
+
+function setScore(v){ score = v; scoreEl.textContent = score; }
+
+document.getElementById('toObs').addEventListener('click', showObservation);
+document.getElementById('toExp').addEventListener('click', showExperiment);
+document.getElementById('toData').addEventListener('click', showData);
+document.getElementById('reset').addEventListener('click', ()=> { setScore(0); showObservation(); });
+
+/* LEVEL 1: Observation */
+const obsQ = [
+  {text: "The plant's leaves are brown and curled.", correct:"Observation"},
+  {text: "The plant is dying because it was watered too little.", correct:"Inference"},
+  {text: "There are many small holes in the leaf surface.", correct:"Observation"},
+  {text: "The insect prefers this plant because it eats the leaf tissue.", correct:"Inference"}
+];
+
+function showObservation(){
+  stage.innerHTML = '';
+  const box = document.createElement('div');
+  box.innerHTML = `<h3>Level 1 — Observation vs Inference</h3><p>Select Observation or Inference for each statement.</p>`;
+  obsQ.forEach((q, i)=>{
+    const card = document.createElement('div');
+    card.style.background = '#fff';
+    card.style.padding = '10px';
+    card.style.margin = '12px 0';
+    card.style.borderRadius = '8px';
+    card.innerHTML = `<div style="font-weight:700">${q.text}</div>
+      <div style="margin-top:8px;display:flex;gap:8px">
+        <button data-i="${i}" data-choice="Observation" class="opt btn" style="background:#dff6ff;color:#07203a">Observation</button>
+        <button data-i="${i}" data-choice="Inference" class="opt btn" style="background:#ffdede;color:#6b0000">Inference</button>
+        <div style="margin-left:8px" id="fb${i}"></div>
+      </div>`;
+    box.appendChild(card);
+  });
+  stage.appendChild(box);
+  // handlers
+  [...stage.querySelectorAll('.opt')].forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      const i = parseInt(btn.getAttribute('data-i'));
+      const choice = btn.getAttribute('data-choice');
+      const fb = document.getElementById('fb'+i);
+      if (choice === obsQ[i].correct){
+        fb.innerHTML = `<span style="color:green;font-weight:700">Correct</span>`;
+        setScore(score + 10);
+      } else {
+        fb.innerHTML = `<span style="color:#a00;font-weight:700">Not quite</span>`;
+      }
+      // disable buttons
+      const opts = stage.querySelectorAll(`button[data-i="${i}"]`);
+      opts.forEach(o => o.disabled = true);
+    });
+  });
+}
+
+/* LEVEL 2: Experiment Setup (drag/drop) */
+function showExperiment(){
+  stage.innerHTML = `<h3>Level 2 — Experiment Setup</h3>
+    <p>Drag items into the correct boxes: Control, Independent variable, Dependent variable.</p>
+    <div class="row">
+      <div style="flex:1" class="box">
+        <h4>Items</h4>
+        <div id="items">
+          <div draggable="true" class="draggable" id="same_soil">Same soil</div>
+          <div draggable="true" class="draggable" id="sunlight">Sunlight (vary)</div>
+          <div draggable="true" class="draggable" id="plant_height">Plant height measure</div>
+          <div draggable="true" class="draggable" id="water">Same water amount</div>
+        </div>
+      </div>
+      <div style="flex:2">
+        <div class="box dropzone" id="controlZone"><strong>Control</strong><div id="controlList"></div></div>
+        <div style="height:12px"></div>
+        <div class="box dropzone" id="indZone"><strong>Independent Variable</strong><div id="indList"></div></div>
+        <div style="height:12px"></div>
+        <div class="box dropzone" id="depZone"><strong>Dependent Variable</strong><div id="depList"></div></div>
+      </div>
+    </div>
+    <div style="margin-top:12px" class="center"><button id="submitExp" class="btn">Submit</button></div>
+  `;
+  // drag events
+  const drags = stage.querySelectorAll('.draggable');
+  drags.forEach(d => {
+    d.addEventListener('dragstart', ev => {
+      ev.dataTransfer.setData('text/plain', d.id);
+      setTimeout(()=> d.style.display = 'none', 0);
+    });
+    d.addEventListener('dragend', ev => {
+      d.style.display = 'block';
+    });
+  });
+  const zones = ['controlZone','indZone','depZone'];
+  zones.forEach(zid => {
+    const z = document.getElementById(zid);
+    z.addEventListener('dragover', ev => ev.preventDefault());
+    z.addEventListener('drop', ev => {
+      ev.preventDefault();
+      const id = ev.dataTransfer.getData('text/plain');
+      const el = document.getElementById(id);
+      const list = z.querySelector('div'); // container
+      list.appendChild(el);
+    });
+  });
+
+  document.getElementById('submitExp').addEventListener('click', ()=>{
+    const mapping = {
+      controlZone: ['same_soil','water'],
+      indZone: ['sunlight'],
+      depZone: ['plant_height']
+    };
+    let ok = true;
+    for (const zone in mapping){
+      const expected = mapping[zone];
+      const childIds = Array.from(document.getElementById(zone).querySelector('div').children).map(n => n.id);
+      expected.forEach(eid => {
+        if (!childIds.includes(eid)) ok = false;
+      });
+    }
+    if (ok){
+      alert('Good job! You set a fair experiment.');
+      setScore(score + 20);
+      // auto-advance to data interpretation
+      showData();
+    } else {
+      alert('Some items are not in the correct place. Controls are things you keep the same.');
+    }
+  });
+}
+
+/* LEVEL 3: Data Interpretation */
+function showData(){
+  stage.innerHTML = `<h3>Level 3 — Data Interpretation</h3>
+    <p>Look at the graph and choose the best conclusion.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <canvas id="chart" width="600" height="320"></canvas>
+      <div style="flex:1">
+        <div style="margin-bottom:8px"><button class="btn" data-idx="0">Bacteria grow best at 37°C</button></div>
+        <div style="margin-bottom:8px"><button class="btn" data-idx="1">Bacteria cannot grow at 20°C</button></div>
+        <div style="margin-bottom:8px"><button class="btn" data-idx="2">Higher temperature always causes more growth</button></div>
+      </div>
+    </div>
+  `;
+  // draw chart
+  const canvas = document.getElementById('chart');
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fff'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  const temps = [4,20,37,45], values = [10,60,100,30];
+  const max = Math.max(...values);
+  const baseX = 60, baseY = 260;
+  // axes
+  ctx.strokeStyle = '#333'; ctx.lineWidth = 2;
+  ctx.strokeRect(baseX, 40, 480, 220);
+  // bars
+  temps.forEach((t,i)=>{
+    const barW = 80, gap = 30;
+    const x = baseX + gap + i*(barW + gap);
+    const h = (values[i]/max)*160;
+    ctx.fillStyle = '#2a9df4';
+    ctx.fillRect(x, baseY - h, barW, h);
+    ctx.fillStyle = '#07203a'; ctx.font = '14px Arial';
+    ctx.fillText(`${t}°C`, x + barW/2 - 12, baseY + 20);
+  });
+
+  // choices handlers
+  const choices = stage.querySelectorAll('button[data-idx]');
+  choices.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.getAttribute('data-idx'));
+      if (idx === 0){
+        alert('Correct — the highest bar is at 37°C. Use evidence to draw conclusion.');
+        setScore(score + 30);
+        showSummary();
+      } else {
+        alert('Not quite — base your answer on the data shown in the graph.');
+      }
+    });
+  });
+}
+
+/* summary */
+function showSummary(){
+  stage.innerHTML = `<div style="text-align:center">
+    <h2>Investigation complete!</h2>
+    <p style="font-weight:700">Your Score: ${score}</p>
+    <p>You practiced observation, experimental design, and data interpretation.</p>
+    <div style="margin-top:12px">
+      <button id="replay" class="btn">Play Again</button>
+      <button id="cert" class="btn" style="background:#cfefff;color:#07203a">Get Certificate</button>
+    </div>
+  </div>`;
+  document.getElementById('replay').addEventListener('click', ()=> { setScore(0); showObservation(); });
+  document.getElementById('cert').addEventListener('click', generateCertificate);
+}
+
+function generateCertificate(){
+  const win = window.open('', '_blank');
+  win.document.write(`<html><head><title>Certificate</title></head><body style="font-family:Arial;padding:40px"><div style="border:4px solid #07203a;padding:40px;border-radius:12px;text-align:center"><h1>Certificate of Completion</h1><p style="font-size:18px">Science Detective — Nature of Science</p><p style="margin-top:30px">This certifies that you completed the investigation with score: <strong>${score}</strong></p><p style="margin-top:30px">Well done!</p></div></body></html>`);
+  win.print();
+}
+
+showObservation(); // initial
+</script>
+
+</body>
+</html>

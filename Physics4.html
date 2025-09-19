@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Push the Box - Interactive Physics Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+        .controls label {
+            margin: 0 10px;
+        }
+        canvas {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .graphs {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .formula {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Push the Box - Physics Game</h1>
+        <div class="controls">
+            <label>Force (N): <input type="range" id="force" min="1" max="100" value="50"></label>
+            <span id="forceVal">50 N</span>
+            <label>Mass (kg): <input type="range" id="mass" min="1" max="50" value="10"></label>
+            <span id="massVal">10 kg</span>
+            <label>Friction: <input type="checkbox" id="friction"></label>
+            <button id="startBtn">Start</button>
+            <button id="resetBtn">Reset</button>
+        </div>
+        <canvas id="mainCanvas" width="800" height="300"></canvas>
+        <div class="graphs">
+            <div>
+                <h3>Velocity vs Time</h3>
+                <canvas id="graphV" width="350" height="200"></canvas>
+            </div>
+            <div>
+                <h3>Acceleration vs Time</h3>
+                <canvas id="graphA" width="350" height="200"></canvas>
+            </div>
+        </div>
+        <div class="formula">Formula: F = m a (Net Force = Mass × Acceleration)</div>
+    </div>
+
+    <script>
+        const mainCanvas = document.getElementById('mainCanvas');
+        const ctx = mainCanvas.getContext('2d');
+        const graphV = document.getElementById('graphV');
+        const ctxV = graphV.getContext('2d');
+        const graphA = document.getElementById('graphA');
+        const ctxA = graphA.getContext('2d');
+
+        let force = 50;
+        let mass = 10;
+        let frictionOn = false;
+        let x = 50; // box position
+        let v = 0; // velocity
+        let a = 0; // acceleration
+        let t = 0; // time
+        let dataV = []; // velocity data
+        let dataA = []; // acceleration data
+        let running = false;
+        let lastTime = 0;
+
+        const mu = 0.3; // friction coefficient
+        const g = 9.8; // gravity
+
+        // Update input values
+        document.getElementById('force').addEventListener('input', e => {
+            force = parseInt(e.target.value);
+            document.getElementById('forceVal').textContent = `${force} N`;
+        });
+
+        document.getElementById('mass').addEventListener('input', e => {
+            mass = parseInt(e.target.value);
+            document.getElementById('massVal').textContent = `${mass} kg`;
+        });
+
+        document.getElementById('friction').addEventListener('change', e => {
+            frictionOn = e.target.checked;
+        });
+
+        // Start/Stop animation
+        document.getElementById('startBtn').addEventListener('click', () => {
+            running = !running;
+            document.getElementById('startBtn').textContent = running ? 'Stop' : 'Start';
+            if (running && !lastTime) {
+                lastTime = performance.now();
+                animate();
+            }
+        });
+
+        // Reset
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            running = false;
+            document.getElementById('startBtn').textContent = 'Start';
+            x = 50;
+            v = 0;
+            a = 0;
+            t = 0;
+            dataV = [];
+            dataA = [];
+            lastTime = 0;
+            drawScene();
+            drawGraphs();
+        });
+
+        function updatePhysics(dt) {
+            let f_net = force;
+            if (frictionOn) {
+                const frictionForce = mu * mass * g;
+                f_net -= frictionForce;
+                if (f_net < 0) f_net = 0;
+            }
+            a = f_net / mass;
+            v += a * dt;
+            if (v < 0) v = 0;
+            x += v * dt;
+            if (x > mainCanvas.width - 50) {
+                x = 50;
+                v = 0;
+            }
+        }
+
+        function drawScene() {
+            ctx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+            
+            // Draw ground
+            ctx.fillStyle = '#27ae60';
+            ctx.fillRect(0, 250, mainCanvas.width, 50);
+            
+            // Draw box
+            ctx.fillStyle = '#3498db';
+            ctx.fillRect(x, 200, 50, 50);
+            
+            // Draw force arrow
+            if (running) {
+                ctx.strokeStyle = '#e74c3c';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(x - 20, 225);
+                ctx.lineTo(x, 225);
+                ctx.moveTo(x - 5, 220);
+                ctx.lineTo(x, 225);
+                ctx.moveTo(x - 5, 230);
+                ctx.lineTo(x, 225);
+                ctx.stroke();
+                ctx.fillStyle = '#e74c3c';
+                ctx.font = '14px Arial';
+                ctx.fillText(`${force} N`, x - 40, 220);
+            }
+            
+            // Display values
+            ctx.fillStyle = 'black';
+            ctx.font = '18px Arial';
+            ctx.fillText(`Acceleration: ${a.toFixed(2)} m/s²`, 10, 30);
+            ctx.fillText(`Velocity: ${v.toFixed(2)} m/s`, 10, 60);
+        }
+
+        function drawGraph(ctxG, data, label, color, scaleY) {
+            ctxG.clearRect(0, 0, ctxG.canvas.width, ctxG.canvas.height);
+            
+            // Axes
+            ctxG.strokeStyle = '#bdc3c7';
+            ctxG.lineWidth = 1;
+            ctxG.beginPath();
+            ctxG.moveTo(20, 10);
+            ctxG.lineTo(20, ctxG.canvas.height - 20);
+            ctxG.lineTo(ctxG.canvas.width - 10, ctxG.canvas.height - 20);
+            ctxG.stroke();
+            
+            // Labels
+            ctxG.fillStyle = 'black';
+            ctxG.font = '12px Arial';
+            ctxG.fillText(label, 30, 20);
+            ctxG.fillText('Time (s)', ctxG.canvas.width / 2, ctxG.canvas.height - 5);
+            
+            // Data line
+            if (data.length === 0) return;
+            ctxG.strokeStyle = color;
+            ctxG.lineWidth = 2;
+            ctxG.beginPath();
+            ctxG.moveTo(20, ctxG.canvas.height - 20 - (data[0] * scaleY));
+            data.forEach((val, i) => {
+                let px = 20 + i * (ctxG.canvas.width - 30) / data.length;
+                let py = ctxG.canvas.height - 20 - (val * scaleY);
+                if (py < 10) py = 10; // Clip
+                ctxG.lineTo(px, py);
+            });
+            ctxG.stroke();
+        }
+
+        function animate() {
+            if (!running) return;
+            
+            const now = performance.now();
+            const dt = (now - lastTime) / 1000;
+            lastTime = now;
+            
+            t += dt;
+            updatePhysics(dt);
+            drawScene();
+            
+            dataV.push(v);
+            dataA.push(a);
+            if (dataV.length > 200) {
+                dataV.shift();
+                dataA.shift();
+            }
+            
+            drawGraph(ctxV, dataV, 'Velocity (m/s)', '#2ecc71', 10); // Scale for v
+            drawGraph(ctxA, dataA, 'Acceleration (m/s²)', '#e74c3c', 20); // Scale for a
+            
+            requestAnimationFrame(animate);
+        }
+
+        // Initial draw
+        drawScene();
+        drawGraphs();
+    </script>
+</body>
+</html>

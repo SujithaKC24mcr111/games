@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Science Gamified Learning | Class 6</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --yellow: #f1c40f;
+            --purple: #9b59b6;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        header {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .logo-icon {
+            font-size: 2.5rem;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: flex;
+            min-height: 500px;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: var(--dark);
+            color: white;
+            padding: 20px 0;
+        }
+        
+        .sidebar-title {
+            padding: 0 20px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 15px;
+        }
+        
+        .chapters-list {
+            list-style: none;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .chapter-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .chapter-link {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chapter-link:hover, .chapter-link.active {
+            background: var(--primary);
+            padding-left: 25px;
+        }
+        
+        .chapter-link i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .content-area {
+            flex: 1;
+            padding: 20px;
+            background: var(--light);
+        }
+        
+        .chapter-content {
+            display: none;
+        }
+        
+        .chapter-content.active {
+            display: block;
+        }
+        
+        .chapter-header {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .games-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+        
+        .game-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .game-image {
+            height: 160px;
+            background: linear-gradient(135deg, var(--purple), var(--primary));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            color: white;
+        }
+        
+        .game-details {
+            padding: 15px;
+        }
+        
+        .game-title {
+            font-size: 1.2rem;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+        
+        .game-desc {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .play-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: var(--secondary);
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        
+        .play-btn:hover {
+            background: #27ae60;
+        }
+        
+        .game-area {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .game-ui {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .quiz-container {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .option {
+            padding: 15px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        
+        .option:hover {
+            border-color: var(--primary);
+            background: #f0f8ff;
+        }
+        
+        .selected {
+            border-color: var(--primary);
+            background: #e1f0ff;
+        }
+        
+        .correct {
+            border-color: var(--secondary);
+            background: #d4edda;
+        }
+        
+        .incorrect {
+            border-color: var(--accent);
+            background: #f8d7da;
+        }
+        
+        .feedback {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        
+        .next-btn {
+            padding: 12px 25px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .next-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .score-container {
+            display: flex;
+            justify-content: space-around;
+            background: var(--dark);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .score-item {
+            text-align: center;
+        }
+        
+        .score-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--yellow);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--dark);
+            color: white;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+            }
+            
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">🔬</div>
+                <div>
+                    <h1>Science Gamified Learning</h1>
+                    <div class="subtitle">BSE Odisha Class 6 Science Syllabus</div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <h3 class="sidebar-title">Chapters</h3>
+                <ul class="chapters-list">
+                    <li class="chapter-item">
+                        <a href="#" class="chapter-link active" data-chapter="1">
+                            <i class="fas fa-atom"></i>
+                            Chapter 1: The Nature of Science
+                        </a>
+                    </li>
+                    <li class="chapter-item">
+                        <a href="#" class="chapter-link" data-chapter="2">
+                            <i class="fas fa-ruler"></i>
+                            Chapter 2: Measurement
+                        </a>
+                    </li>
+                    <li class="chapter-item">
+                        <a href="#" class="chapter-link" data-chapter="3">
+                            <i class="fas fa-cube"></i>
+                            Chapter 3: Things Around Us
+                        </a>
+                    </li>
+                    <li class="chapter-item">
+                        <a href="#" class="chapter-link" data-chapter="4">
+                            <i class="fas fa-tint"></i>
+                            Chapter 4: Water
+                        </a>
+                    </li>
+                    <li class="chapter-item">
+                        <a href="#" class="chapter-link" data-chapter="5">
+                            <i class="fas fa-lightbulb"></i>
+                            Chapter 5: Light and Shadows
+                        </a>
+                    </li>
+                    <li class="chapter-item">
+                        <a href="#" class="chapter-link" data-chapter="6">
+                            <i class="fas fa-magnet"></i>
+                            Chapter 6: Magnetism
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="content-area">
+                <div class="chapter-content active" id="chapter-1">
+                    <div class="chapter-header">
+                        <h2>Chapter 1: The Nature of Science</h2>
+                        <p>This chapter introduces the subject of science, the process of scientific inquiry, and the connection between Science and Technology.</p>
+                    </div>
+                    
+                    <div class="games-container">
+                        <div class="game-card">
+                            <div class="game-image">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="game-details">
+                                <h3 class="game-title">Scientific Inquiry Quiz</h3>
+                                <p class="game-desc">Test your knowledge about the scientific method and inquiry process.</p>
+                                <a href="#" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        
+                        <div class="game-card">
+                            <div class="game-image">
+                                <i class="fas fa-flask"></i>
+                            </div>
+                            <div class="game-details">
+                                <h3 class="game-title">Science vs Technology</h3>
+                                <p class="game-desc">Match scientific discoveries with their technological applications.</p>
+                                <a href="#" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        
+                        <div class="game-card">
+                            <div class="game-image">
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                            <div class="game-details">
+                                <h3 class="game-title">Measurement Match</h3>
+                                <p class="game-desc">Learn about standard units and measurement tools through a matching game.</p>
+                                <a href="#" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="game-area">
+                        <h3>Scientific Inquiry Quiz</h3>
+                        <div class="game-ui">
+                            <div class="quiz-container">
+                                <div class="question" id="question">
+                                    What is the first step in the scientific method?
+                                </div>
+                                <div class="options">
+                                    <div class="option" data-correct="true">Observation</div>
+                                    <div class="option">Experiment</div>
+                                    <div class="option">Conclusion</div>
+                                    <div class="option">Hypothesis</div>
+                                </div>
+                                <div class="feedback correct">Correct! Observation is the first step in the scientific method.</div>
+                                <button class="next-btn">Next Question</button>
+                            </div>
+                            
+                            <div class="score-container">
+                                <div class="score-item">
+                                    <div>Score</div>
+                                    <div class="score-value">0</div>
+                                </div>
+                                <div class="score-item">
+                                    <div>Questions</div>
+                                    <div class="score-value">0/5</div>
+                                </div>
+                                <div class="score-item">
+                                    <div>Time</div>
+                                    <div class="score-value">60s</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chapter-content" id="chapter-2">
+                    <div class="chapter-header">
+                        <h2>Chapter 2: Measurement</h2>
+                        <p>This chapter covers the basics of physical measurement, standard units, and measuring instruments.</p>
+                    </div>
+                    
+                    <div class="games-container">
+                        <div class="game-card">
+                            <div class="game-image" style="background:linear-gradient(135deg, #ff7e5f, #feb47b)">
+                                <i class="fas fa-ruler-combined"></i>
+                            </div>
+                            <div class="game-details">
+                                <h3 class="game-title">Unit Conversion</h3>
+                                <p class="game-desc">Practice converting between different units of measurement.</p>
+                                <a href="#" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        
+                        <div class="game-card">
+                            <div class="game-image" style="background:linear-gradient(135deg, #00cdac, #02aab0)">
+                                <i class="fas fa-weight-hanging"></i>
+                            </div>
+                            <div class="game-details">
+                                <h3 class="game-title">Balance the Scale</h3>
+                                <p class="game-desc">Learn about mass and weight by balancing measurement scales.</p>
+                                <a href="#" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Gamified STEM Learning Platform | Developed for Government of Odisha</p>
+            <p>This platform works both online and offline, making it suitable for rural areas with limited connectivity</p>
+        </footer>
+    </div>
+
+    <script>
+        // Chapter navigation
+        document.querySelectorAll('.chapter-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all links
+                document.querySelectorAll('.chapter-link').forEach(l => l.classList.remove('active'));
+                
+                // Add active class to clicked link
+                this.classList.add('active');
+                
+                // Hide all chapter contents
+                document.querySelectorAll('.chapter-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Show the selected chapter content
+                const chapterId = this.getAttribute('data-chapter');
+                document.getElementById(`chapter-${chapterId}`).classList.add('active');
+            });
+        });
+        
+        // Quiz game functionality
+        const questions = [
+            {
+                question: "What is the first step in the scientific method?",
+                options: ["Observation", "Experiment", "Conclusion", "Hypothesis"],
+                correct: 0,
+                explanation: "Correct! Observation is the first step in the scientific method."
+            },
+            {
+                question: "Which of these is NOT a characteristic of a good scientist?",
+                options: ["Curiosity", "Skepticism", "Bias", "Creativity"],
+                correct: 2,
+                explanation: "Correct! Scientists should avoid bias to maintain objectivity."
+            },
+            {
+                question: "What is a hypothesis?",
+                options: ["A proven fact", "A random guess", "An educated explanation", "The conclusion of an experiment"],
+                correct: 2,
+                explanation: "Correct! A hypothesis is an educated explanation that can be tested."
+            },
+            {
+                question: "Which of these is an example of technology?",
+                options: ["Gravity", "Magnetism", "Mobile phone", "Photosynthesis"],
+                correct: 2,
+                explanation: "Correct! A mobile phone is a product of technology."
+            },
+            {
+                question: "Why are standard units important in science?",
+                options: ["They make measurements look professional", "They allow scientists to compare results", "They are required by law", "They are easier to write down"],
+                correct: 1,
+                explanation: "Correct! Standard units allow scientists to compare and reproduce results."
+            }
+        ];
+        
+        let currentQuestion = 0;
+        let score = 0;
+        
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('question').textContent = q.question;
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach((option, index) => {
+                option.textContent = q.options[index];
+                option.classList.remove('selected', 'correct', 'incorrect');
+            });
+            
+            document.querySelector('.feedback').classList.remove('correct', 'incorrect');
+            document.querySelector('.feedback').style.display = 'none';
+        }
+        
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                if (this.classList.contains('selected')) return;
+                
+                // Remove selected class from all options
+                document.querySelectorAll('.option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked option
+                this.classList.add('selected');
+                
+                // Check if answer is correct
+                const selectedIndex = Array.from(this.parentElement.children).indexOf(this);
+                const correctIndex = questions[currentQuestion].correct;
+                
+                if (selectedIndex === correctIndex) {
+                    this.classList.add('correct');
+                    document.querySelector('.feedback').textContent = questions[currentQuestion].explanation;
+                    document.querySelector('.feedback').classList.add('correct');
+                    score++;
+                } else {
+                    this.classList.add('incorrect');
+                    // Highlight correct answer
+                    document.querySelectorAll('.option')[correctIndex].classList.add('correct');
+                    document.querySelector('.feedback').textContent = questions[currentQuestion].explanation;
+                    document.querySelector('.feedback').classList.add('incorrect');
+                }
+                
+                document.querySelector('.feedback').style.display = 'block';
+            });
+        });
+        
+        document.querySelector('.next-btn').addEventListener('click', function() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                loadQuestion();
+                
+                // Update score display
+                document.querySelector('.score-value').textContent = score;
+                document.querySelectorAll('.score-value')[1].textContent = `${currentQuestion}/${questions.length}`;
+            } else {
+                // Quiz completed
+                alert(`Quiz completed! Your score: ${score}/${questions.length}`);
+                currentQuestion = 0;
+                score = 0;
+                loadQuestion();
+                
+                // Reset score display
+                document.querySelector('.score-value').textContent = score;
+                document.querySelectorAll('.score-value')[1].textContent = `0/${questions.length}`;
+            }
+        });
+        
+        // Initialize the first question
+        loadQuestion();
+        
+        // Service Worker Registration for Offline Functionality
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').then(function(registration) {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

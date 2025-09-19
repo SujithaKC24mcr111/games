@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Kinetic Energy Learning Game</title>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      touch-action: manipulation;
+    }
+    
+    body {
+      margin: 0;
+      padding: 0;
+      background: #87ceeb;
+      font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+      overflow: hidden;
+      color: #333;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    #game-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-width: 1200px;
+      max-height: 800px;
+    }
+    
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+    
+    .controls {
+      position: absolute;
+      bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 500px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+    
+    .control-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #6c5ce7, #a29bfe);
+      border: none;
+      color: white;
+      font-size: 24px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+    
+    .control-btn:active {
+      transform: scale(0.95);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    .control-btn.launch {
+      background: linear-gradient(145deg, #e74c3c, #e67e22);
+      width: 70px;
+      height: 70px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    
+    .info-panel {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 12px 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(5px);
+      z-index: 10;
+      max-width: 45%;
+    }
+    
+    .info-text {
+      font-size: 14px;
+      margin-bottom: 5px;
+      color: #2d3436;
+    }
+    
+    .tutorial-panel {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      z-index: 20;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    
+    .tutorial-title {
+      font-size: 22px;
+      margin-bottom: 15px;
+      color: #6c5ce7;
+      font-weight: bold;
+    }
+    
+    .tutorial-content {
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    
+    .start-btn {
+      background: linear-gradient(145deg, #00b894, #00cec9);
+      border: none;
+      padding: 12px 24px;
+      border-radius: 50px;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: all 0.2s ease;
+    }
+    
+    .start-btn:active {
+      transform: scale(0.95);
+    }
+    
+    .concept-panel {
+      position: absolute;
+      top: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 12px 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 10;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      backdrop-filter: blur(5px);
+      max-height: 20vh;
+      overflow-y: auto;
+      font-size: 16px;
+      line-height: 1.4;
+    }
+    
+    .language-selector {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px 12px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(5px);
+      z-index: 10;
+    }
+    
+    .language-selector select {
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      color: #2d3436;
+      outline: none;
+    }
+    
+    .hide {
+      display: none;
+    }
+    
+    @media (max-width: 768px) {
+      #game-container {
+        max-width: 100%;
+        max-height: 100%;
+      }
+      
+      canvas {
+        border-radius: 0;
+      }
+      
+      .info-panel {
+        max-width: 60%;
+        padding: 10px;
+        top: 10px;
+        left: 10px;
+      }
+      
+      .info-text {
+        font-size: 12px;
+      }
+      
+      .concept-panel {
+        top: 100px;
+        width: 95%;
+        max-height: 15vh;
+        font-size: 14px;
+        padding: 10px;
+      }
+      
+      .language-selector {
+        top: 10px;
+        right: 10px;
+        padding: 6px 10px;
+      }
+      
+      .control-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+      }
+      
+      .control-btn.launch {
+        width: 60px;
+        height: 60px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .info-panel {
+        max-width: 65%;
+        padding: 8px;
+      }
+      
+      .info-text {
+        font-size: 11px;
+      }
+      
+      .controls {
+        bottom: 10px;
+      }
+      
+      .control-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 18px;
+      }
+      
+      .control-btn.launch {
+        width: 55px;
+        height: 55px;
+        font-size: 12px;
+      }
+      
+      .tutorial-panel {
+        width: 95%;
+        padding: 15px;
+      }
+      
+      .tutorial-title {
+        font-size: 20px;
+      }
+      
+      .tutorial-content {
+        font-size: 14px;
+      }
+      
+      .concept-panel {
+        top: 90px;
+        width: 92%;
+        max-height: 12vh;
+        font-size: 13px;
+        padding: 8px;
+        line-height: 1.3;
+      }
+      
+      .language-selector {
+        padding: 5px 8px;
+      }
+      
+      .language-selector select {
+        font-size: 12px;
+      }
+    }
+    
+    @media (max-height: 600px) {
+      .info-panel {
+        top: 5px;
+        left: 5px;
+        padding: 6px;
+      }
+      
+      .concept-panel {
+        top: 60px;
+        left: 5px;
+        width: calc(100% - 10px);
+        max-height: 12vh;
+        padding: 5px 8px;
+        font-size: 11px;
+      }
+      
+      .language-selector {
+        top: 5px;
+        right: 5px;
+        padding: 4px 6px;
+      }
+      
+      .controls {
+        bottom: 5px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <div id="tutorial" class="tutorial-panel">
+      <h2 class="tutorial-title" id="tutorial-title">Kinetic Energy Learning Game</h2>
+      <div class="tutorial-content" id="tutorial-content">
+        <p id="tutorial-desc">Kinetic Energy is the energy of motion. It depends on:</p>
+        <ul style="margin-left: 20px; margin-top: 8px;">
+          <li id="tutorial-mass">MASS: How heavy something is</li>
+          <li id="tutorial-velocity">VELOCITY: How fast it moves</li>
+        </ul>
+        <p style="margin-top: 12px;" id="tutorial-formula">Formula: KE = ½ × mass × velocity²</p>
+        <p style="margin-top: 12px; font-weight: bold;" id="tutorial-controls-title">Controls:</p>
+        <p id="tutorial-controls">➡️/⬅️ Change velocity<br>
+           ⬆️/⬇️ Change mass<br>
+           SPACE/LAUNCH to throw the ball</p>
+      </div>
+      <button class="start-btn" id="start-btn">START LEARNING</button>
+    </div>
+    
+    <div class="language-selector">
+      <select id="language-select">
+        <option value="en">English</option>
+        <option value="hi">हिंदी (Hindi)</option>
+        <option value="or">ଓଡ଼ିଆ (Odia)</option>
+      </select>
+    </div>
+    
+    <div id="concept" class="concept-panel hide">
+      <!-- Concept messages will appear here -->
+    </div>
+    
+    <div class="info-panel">
+      <div class="info-text" id="velocity-text">Velocity: 200</div>
+      <div class="info-text" id="mass-text">Mass: 2</div>
+      <div class="info-text" id="ke-text">K.E: 0 J</div>
+    </div>
+    
+    <div class="controls">
+      <button class="control-btn" id="left-btn">←</button>
+      <button class="control-btn" id="down-btn">−</button>
+      <button class="control-btn launch" id="launch-btn">LAUNCH</button>
+      <button class="control-btn" id="up-btn">+</button>
+      <button class="control-btn" id="right-btn">→</button>
+    </div>
+  </div>
+
+  <script>
+    // Language translations
+    const translations = {
+      en: {
+        tutorialTitle: "Kinetic Energy Learning Game",
+        tutorialDesc: "Kinetic Energy is the energy of motion. It depends on:",
+        tutorialMass: "MASS: How heavy something is",
+        tutorialVelocity: "VELOCITY: How fast it moves",
+        tutorialFormula: "Formula: KE = ½ × mass × velocity²",
+        tutorialControlsTitle: "Controls:",
+        tutorialControls: "➡️/⬅️ Change velocity<br>⬆️/⬇️ Change mass<br>SPACE/LAUNCH to throw the ball",
+        startButton: "START LEARNING",
+        velocityText: "Velocity: ",
+        massText: "Mass: ",
+        keText: "K.E: ",
+        concept1: "⚡ The ball is very fast! Because velocity is squared in the formula, KE grows a lot when speed increases.",
+        concept2: "💪 The ball is heavy now. Even at the same speed, a heavier ball has more kinetic energy.",
+        concept3: "🔎 Try changing mass and velocity. Notice how the KE number changes when you launch the ball!",
+        launchText: "LAUNCH"
+      },
+      hi: {
+        tutorialTitle: "गतिज ऊर्जा सीखने का खेल",
+        tutorialDesc: "गतिज ऊर्जा गति की ऊर्जा है। यह निर्भर करती है:",
+        tutorialMass: "द्रव्यमान: कोई चीज कितनी भारी है",
+        tutorialVelocity: "वेग: यह कितनी तेजी से चलती है",
+        tutorialFormula: "सूत्र: KE = ½ × द्रव्यमान × वेग²",
+        tutorialControlsTitle: "नियंत्रण:",
+        tutorialControls: "➡️/⬅️ वेग बदलें<br>⬆️/⬇️ द्रव्यमान बदलें<br>SPACE/LAUNCH गेंद को फेंकने के लिए",
+        startButton: "सीखना शुरू करें",
+        velocityText: "वेग: ",
+        massText: "द्रव्यमान: ",
+        keText: "गतिज ऊर्जा: ",
+        concept1: "⚡ गेंद बहुत तेज है! क्योंकि सूत्र में वेग वर्गित है, गति बढ़ने पर गतिज ऊर्जा बहुत बढ़ जाती है।",
+        concept2: "💪 गेंद अब भारी है। एक ही गति पर भी, भारी गेंद में अधिक गतिज ऊर्जा होती है।",
+        concept3: "🔎 द्रव्यमान और वेग बदलने का प्रयास करें। ध्यान दें कि गेंद लॉन्च करने पर KE संख्या कैसे बदलती है!",
+        launchText: "लॉन्च"
+      },
+      or: {
+        tutorialTitle: "କାଇନେଟିକ୍ ଏନର୍ଜି ଶିକ୍ଷା ଖେଳ",
+        tutorialDesc: "କାଇନେଟିକ୍ ଏନର୍ଜି ହେଉଛି ଗତିର ଶକ୍ତି। ଏହା ଉପରେ ନିର୍ଭର କରେ:",
+        tutorialMass: "ବସ୍ତୁତ୍ଵ: କିଛି କିଭଳି ଭାରୀ ଅଟେ",
+        tutorialVelocity: "ବେଗ: ଏହା କେତେ ଶୀଘ୍ର ଗତି କରେ",
+        tutorialFormula: "ସୂତ୍ର: KE = ½ × ବସ୍ତୁତ୍ଵ × ବେଗ²",
+        tutorialControlsTitle: "ନିୟନ୍ତ୍ରଣ:",
+        tutorialControls: "➡️/⬅️ ବେଗ ବଦଳାନ୍ତୁ<br>⬆️/⬇️ ବସ୍ତୁତ୍ଵ ବଦଳାନ୍ତୁ<br>SPACE/LAUNCH ବବଲ୍ ଫୋପାଡ଼ିବା ପାଇଁ",
+        startButton: "ଶିଖା ଆରମ୍ଭ କରନ୍ତୁ",
+        velocityText: "ବେଗ: ",
+        massText: "ବସ୍ତୁତ୍ଵ: ",
+        keText: "କାଇନେଟିକ୍ ଏନର୍ଜି: ",
+        concept1: "⚡ ବଲ୍ ଟି ବହୁତ ଶୀଘ୍ର ଅଛି! ଯେହେତୁ ସୂତ୍ରରେ ବେଗ ବର୍ଗିତ ହୋଇଛି, ଗତି ବଢ଼ିବା ସହିତ KE ବହୁତ ବଢ଼େ।",
+        concept2: "💪 ବଲ୍ ଟି ବର୍ତ୍ତମାନ ଭାରୀ ଅଛି। ସମାନ ଗତିରେ ମଧ୍ୟ, ଏକ ଭାରୀ ବଲ୍ ର ଅଧିକ ଗତିଜ ଶକ୍ତି ଅଛି।",
+        concept3: "🔎 ବସ୍ତୁତ୍ଵ ଏବଂ ବେଗ ବଦଳାଇବାକୁ ଚେଷ୍ଟା କରନ୍ତୁ। ଧ୍ୟାନ ଦିଅନ୍ତୁ ଯେତେବେଳେ ଆପଣ ବଲ୍ ଲଞ୍ଚ କରନ୍ତି KE ସଂଖ୍ୟା କିପରି ବଦଳେ!",
+        launchText: "ଲଞ୍ଚ"
+      }
+    };
+
+    // Detect mobile device
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    const config = {
+      type: Phaser.AUTO,
+      parent: 'game-container',
+      scale: {
+        mode: Phaser.Scale.RESIZE,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: 800,
+        height: 600
+      },
+      backgroundColor: '#87ceeb',
+      physics: {
+        default: 'arcade',
+        arcade: { 
+          gravity: { y: isMobile ? 400 : 300 },
+          debug: false 
+        }
+      },
+      scene: { preload, create, update }
+    };
+
+    let ball, velocityText, massText, keText, conceptPanel;
+    let velocity = 200;
+    let mass = 2;
+    let tutorialShown = false;
+    let explanationTimer = 0;
+    let leftBtn, rightBtn, upBtn, downBtn, launchBtn;
+    let leftKey, rightKey, upKey, downKey, spaceKey;
+    let gameHeight, gameWidth;
+    let currentLanguage = 'en';
+
+    const game = new Phaser.Game(config);
+
+    function preload() {
+      this.load.image('ball', 'https://labs.phaser.io/assets/sprites/shinyball.png');
+      this.load.image('ground', 'https://labs.phaser.io/assets/sprites/platform.png');
+    }
+
+    function create() {
+      // Store game dimensions
+      gameWidth = this.scale.width;
+      gameHeight = this.scale.height;
+      
+      // Get DOM elements
+      velocityText = document.getElementById('velocity-text');
+      massText = document.getElementById('mass-text');
+      keText = document.getElementById('ke-text');
+      conceptPanel = document.getElementById('concept');
+      
+      leftBtn = document.getElementById('left-btn');
+      rightBtn = document.getElementById('right-btn');
+      upBtn = document.getElementById('up-btn');
+      downBtn = document.getElementById('down-btn');
+      launchBtn = document.getElementById('launch-btn');
+      
+      // Set up language selector
+      const languageSelect = document.getElementById('language-select');
+      languageSelect.addEventListener('change', (e) => {
+        currentLanguage = e.target.value;
+        updateLanguage();
+      });
+      
+      // Set up game elements
+      const ground = this.physics.add.staticImage(gameWidth / 2, gameHeight - 20, 'ground')
+        .setScale(gameWidth / 400).refreshBody();
+
+      ball = this.physics.add.image(100, gameHeight - 100, 'ball');
+      ball.setBounce(0.8);
+      ball.setCollideWorldBounds(true);
+      ball.mass = mass;
+      
+      // Scale ball size based on screen size
+      const ballScale = Math.min(1, gameWidth / 800 * 1.2);
+      ball.setScale(ballScale);
+
+      this.physics.add.collider(ball, ground);
+      
+      // Set up keyboard controls
+      leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+      rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+      upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+      downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+      spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+      
+      // Set up touch controls
+      setupTouchControls(this);
+      
+      // Start button event
+      document.getElementById('start-btn').addEventListener('click', () => {
+        document.getElementById('tutorial').classList.add('hide');
+        conceptPanel.classList.remove('hide');
+        tutorialShown = true;
+        
+        // Set initial concept message
+        conceptPanel.textContent = translations[currentLanguage].concept3;
+      });
+      
+      // Add mouse click support for desktop
+      this.input.on('pointerdown', (pointer) => {
+        if (tutorialShown) {
+          ball.setVelocityX(velocity);
+          ball.setVelocityY(isMobile ? -300 : -200);
+        }
+      });
+      
+      updateInfoDisplay();
+      updateLanguage();
+      
+      // Handle window resize
+      this.scale.on('resize', (gameSize) => {
+        gameWidth = gameSize.width;
+        gameHeight = gameSize.height;
+        
+        // Reposition ground on resize
+        ground.setPosition(gameWidth / 2, gameHeight - 20);
+        ground.setScale(gameWidth / 400);
+        ground.refreshBody();
+      });
+    }
+
+    function setupTouchControls(scene) {
+      // Velocity controls
+      const leftHandler = () => {
+        velocity = Math.max(0, velocity - 5);
+        updateInfoDisplay();
+      };
+      
+      leftBtn.addEventListener('touchstart', leftHandler);
+      leftBtn.addEventListener('mousedown', leftHandler);
+      
+      const rightHandler = () => {
+        velocity += 5;
+        updateInfoDisplay();
+      };
+      
+      rightBtn.addEventListener('touchstart', rightHandler);
+      rightBtn.addEventListener('mousedown', rightHandler);
+      
+      // Mass controls
+      const upHandler = () => {
+        mass += 1;
+        ball.mass = mass;
+        updateInfoDisplay();
+      };
+      
+      upBtn.addEventListener('touchstart', upHandler);
+      upBtn.addEventListener('mousedown', upHandler);
+      
+      const downHandler = () => {
+        if (mass > 1) mass -= 1;
+        ball.mass = mass;
+        updateInfoDisplay();
+      };
+      
+      downBtn.addEventListener('touchstart', downHandler);
+      downBtn.addEventListener('mousedown', downHandler);
+      
+      // Launch button
+      const launchHandler = () => {
+        // Higher initial velocity on mobile to ensure ball reaches top
+        const launchVelocity = isMobile ? velocity * 1.2 : velocity;
+        ball.setVelocityX(launchVelocity);
+        ball.setVelocityY(isMobile ? -300 : -200); // Stronger upward force on mobile
+      };
+      
+      launchBtn.addEventListener('touchstart', launchHandler);
+      launchBtn.addEventListener('mousedown', launchHandler);
+      
+      // Prevent default actions for touch events
+      const buttons = [leftBtn, rightBtn, upBtn, downBtn, launchBtn];
+      buttons.forEach(btn => {
+        btn.addEventListener('touchend', (e) => e.preventDefault());
+        btn.addEventListener('touchcancel', (e) => e.preventDefault());
+        btn.addEventListener('touchmove', (e) => e.preventDefault());
+      });
+    }
+
+    function update(time) {
+      if (!tutorialShown) return;
+
+      // Keyboard controls
+      if (leftKey.isDown) {
+        velocity = Math.max(0, velocity - 5);
+        updateInfoDisplay();
+      } else if (rightKey.isDown) {
+        velocity += 5;
+        updateInfoDisplay();
+      }
+
+      if (upKey.isDown) {
+        mass += 1;
+        ball.mass = mass;
+        updateInfoDisplay();
+      } else if (downKey.isDown) {
+        if (mass > 1) mass -= 1;
+        ball.mass = mass;
+        updateInfoDisplay();
+      }
+
+      if (Phaser.Input.Keyboard.JustDown(spaceKey)) {
+        ball.setVelocityX(velocity);
+        ball.setVelocityY(isMobile ? -300 : -200);
+      }
+
+      // Calculate and display kinetic energy
+      const ke = 0.5 * mass * Math.pow(ball.body.velocity.length() / 50, 2);
+      keText.textContent = translations[currentLanguage].keText + ke.toFixed(2) + ' J';
+
+      // Update concept explanations
+      explanationTimer += 1;
+      if (explanationTimer % 30 === 0) {
+        if (velocity > 300) {
+          conceptPanel.textContent = translations[currentLanguage].concept1;
+        } else if (mass > 5) {
+          conceptPanel.textContent = translations[currentLanguage].concept2;
+        } else {
+          conceptPanel.textContent = translations[currentLanguage].concept3;
+        }
+      }
+    }
+    
+    function updateInfoDisplay() {
+      velocityText.textContent = translations[currentLanguage].velocityText + velocity;
+      massText.textContent = translations[currentLanguage].massText + mass;
+    }
+    
+    function updateLanguage() {
+      // Update tutorial text
+      document.getElementById('tutorial-title').textContent = translations[currentLanguage].tutorialTitle;
+      document.getElementById('tutorial-desc').textContent = translations[currentLanguage].tutorialDesc;
+      document.getElementById('tutorial-mass').textContent = translations[currentLanguage].tutorialMass;
+      document.getElementById('tutorial-velocity').textContent = translations[currentLanguage].tutorialVelocity;
+      document.getElementById('tutorial-formula').textContent = translations[currentLanguage].tutorialFormula;
+      document.getElementById('tutorial-controls-title').textContent = translations[currentLanguage].tutorialControlsTitle;
+      document.getElementById('tutorial-controls').innerHTML = translations[currentLanguage].tutorialControls;
+      document.getElementById('start-btn').textContent = translations[currentLanguage].startButton;
+      document.getElementById('launch-btn').textContent = translations[currentLanguage].launchText;
+      
+      // Update info panel
+      updateInfoDisplay();
+      
+      // Update concept panel if visible
+      if (tutorialShown) {
+        conceptPanel.textContent = translations[currentLanguage].concept3;
+      }
+    }
+  </script>
+</body>
+</html>
+
+
