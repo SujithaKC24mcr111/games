@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Climate Science: Weather Patterns</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a5276, #27ae60);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            margin-bottom: 10px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #2ecc71;
+            text-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+        }
+        
+        .game-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        
+        .game-board {
+            flex: 2;
+            min-width: 300px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .controls {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 20px;
+        }
+        
+        .weather-map {
+            width: 100%;
+            height: 400px;
+            background: #1e5c8d;
+            border-radius: 10px;
+            margin: 15px 0;
+            position: relative;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 20% 30%, #3498db 0%, #1e5c8d 40%),
+                radial-gradient(circle at 70% 20%, #2ecc71 0%, #1e5c8d 30%),
+                radial-gradient(circle at 30% 70%, #f1c40f 0%, #1e5c8d 40%),
+                radial-gradient(circle at 80% 70%, #e74c3c 0%, #1e5c8d 40%);
+            background-blend-mode: overlay;
+            background-size: 100% 100%;
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+        }
+        
+        .region {
+            position: absolute;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px black;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .region:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+        
+        .tropical {
+            background: linear-gradient(45deg, rgba(46, 204, 113, 0.6), rgba(39, 174, 96, 0.8));
+            border: 2px solid #27ae60;
+        }
+        
+        .arctic {
+            background: linear-gradient(45deg, rgba(236, 240, 241, 0.6), rgba(189, 195, 199, 0.8));
+            border: 2px solid #bdc3c7;
+        }
+        
+        .desert {
+            background: linear-gradient(45deg, rgba(243, 156, 18, 0.6), rgba(211, 84, 0, 0.8));
+            border: 2px solid #d35400;
+        }
+        
+        .temperate {
+            background: linear-gradient(45deg, rgba(52, 152, 219, 0.6), rgba(41, 128, 185, 0.8));
+            border: 2px solid #2980b9;
+        }
+        
+        .mountain {
+            background: linear-gradient(45deg, rgba(149, 165, 166, 0.6), rgba(127, 140, 141, 0.8));
+            border: 2px solid #7f8c8d;
+        }
+        
+        .weather-card {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .weather-type {
+            font-size: 1.8rem;
+            color: #2ecc71;
+            margin-bottom: 10px;
+        }
+        
+        .weather-details {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .detail {
+            text-align: center;
+            flex: 1;
+            min-width: 80px;
+        }
+        
+        .detail-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .control-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .control-btn:hover {
+            background: #5dade2;
+            transform: translateY(-2px);
+        }
+        
+        .control-btn:active {
+            transform: translateY(0);
+        }
+        
+        .temperature { background: linear-gradient(to bottom, #e74c3c, #c0392b); }
+        .precipitation { background: linear-gradient(to bottom, #3498db, #2980b9); }
+        .wind { background: linear-gradient(to bottom, #bdc3c7, #7f8c8d); }
+        .pressure { background: linear-gradient(to bottom, #9b59b6, #8e44ad); }
+        
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .success {
+            background: rgba(46, 204, 113, 0.3);
+            color: #2ecc71;
+        }
+        
+        .warning {
+            background: rgba(243, 156, 18, 0.3);
+            color: #f39c12;
+        }
+        
+        .instructions {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        h2 {
+            color: #2ecc71;
+            margin-bottom: 15px;
+        }
+        
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        li:before {
+            content: "•";
+            color: #2ecc71;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 15px;
+            font-size: 1.2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .game-area {
+                flex-direction: column;
+            }
+            
+            .control-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Climate Science: Weather Patterns</h1>
+            <p>Match weather patterns to geographical regions and learn about climate factors</p>
+        </header>
+        
+        <div class="game-area">
+            <div class="game-board">
+                <h2>World Weather Map</h2>
+                <div class="weather-map" id="weatherMap">
+                    <!-- Regions will be added by JavaScript -->
+                </div>
+                <div class="score-board">
+                    <div>Score: <span id="score">0</span></div>
+                    <div>Level: <span id="level">1</span></div>
+                    <div>Time: <span id="time">60</span>s</div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <h2>Weather Pattern</h2>
+                <div class="weather-card">
+                    <div class="weather-type" id="weatherType">Monsoon</div>
+                    <div class="weather-details">
+                        <div class="detail">
+                            <div>Temperature</div>
+                            <div class="detail-value" id="weatherTemp">28°C</div>
+                        </div>
+                        <div class="detail">
+                            <div>Rainfall</div>
+                            <div class="detail-value" id="weatherRain">High</div>
+                        </div>
+                        <div class="detail">
+                            <div>Wind</div>
+                            <div class="detail-value" id="weatherWind">Strong</div>
+                        </div>
+                        <div class="detail">
+                            <div>Season</div>
+                            <div class="detail-value" id="weatherSeason">Summer</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h2>Climate Factors</h2>
+                <div class="control-panel">
+                    <button class="control-btn temperature" id="btnLatitude">Latitude</button>
+                    <button class="control-btn precipitation" id="btnOceanCurrents">Ocean Currents</button>
+                    <button class="control-btn wind" id="btnTopography">Topography</button>
+                    <button class="control-btn pressure" id="btnAirMasses">Air Masses</button>
+                    <button class="control-btn temperature" id="btnElevation">Elevation</button>
+                    <button class="control-btn precipitation" id="btnVegetation">Vegetation</button>
+                </div>
+                
+                <button class="control-btn" id="hintBtn" style="width: 100%; background: #9b59b6;">Hint</button>
+                <button class="control-btn" id="nextPattern" style="width: 100%; background: #f39c12;">Next Pattern</button>
+                
+                <div class="status" id="statusMessage">Select the region where this weather pattern is commonly found</div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h2>How To Play</h2>
+            <ul>
+                <li>Study the weather pattern description in the Weather Card</li>
+                <li>Click on the world map region where you think this weather pattern is commonly found</li>
+                <li>Use the Climate Factors buttons to learn about what affects weather patterns</li>
+                <li>Click "Hint" if you need help identifying the region</li>
+                <li>Earn points for correct answers and advance to higher levels</li>
+                <li>Click "Next Pattern" to get a new weather pattern to identify</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Game state
+            const weatherPatterns = [
+                {
+                    type: "Monsoon",
+                    temp: "28°C",
+                    rain: "High",
+                    wind: "Strong",
+                    season: "Summer",
+                    region: "tropical",
+                    description: "Seasonal reversing wind accompanied by corresponding changes in precipitation.",
+                    factors: ["Differential heating", "Seasonal wind patterns", "Ocean temperatures"]
+                },
+                {
+                    type: "Blizzard",
+                    temp: "-15°C",
+                    rain: "Snow",
+                    wind: "Very Strong",
+                    season: "Winter",
+                    region: "arctic",
+                    description: "Severe snowstorm with high winds and low visibility.",
+                    factors: ["Cold air masses", "Moisture source", "Low pressure systems"]
+                },
+                {
+                    type: "Drought",
+                    temp: "35°C",
+                    rain: "None",
+                    wind: "Light",
+                    season: "All year",
+                    region: "desert",
+                    description: "Prolonged period of abnormally low rainfall, leading to water shortage.",
+                    factors: ["High pressure systems", "Rain shadow effect", "Climate change"]
+                },
+                {
+                    type: "Tornado",
+                    temp: "24°C",
+                    rain: "Heavy",
+                    wind: "Extreme",
+                    season: "Spring",
+                    region: "temperate",
+                    description: "Violently rotating column of air in contact with both the surface and a cumulonimbus cloud.",
+                    factors: ["Wind shear", "Instability", "Moisture", "Lift mechanism"]
+                },
+                {
+                    type: "Foehn Wind",
+                    temp: "20°C",
+                    rain: "Low",
+                    wind: "Strong",
+                    season: "All year",
+                    region: "mountain",
+                    description: "Type of dry, warm, down-slope wind that occurs in the lee of a mountain range.",
+                    factors: ["Orographic lift", "Adiabatic warming", "Pressure gradient"]
+                }
+            ];
+            
+            const regions = [
+                { id: "tropical", name: "Tropical", top: "60%", left: "75%", width: "20%", height: "25%" },
+                { id: "arctic", name: "Arctic", top: "5%", left: "25%", width: "30%", height: "20%" },
+                { id: "desert", name: "Desert", top: "40%", left: "40%", width: "20%", height: "20%" },
+                { id: "temperate", name: "Temperate", top: "25%", left: "25%", width: "35%", height: "25%" },
+                { id: "mountain", name: "Mountain", top: "30%", left: "60%", width: "15%", height: "30%" }
+            ];
+            
+            let currentPatternIndex = 0;
+            let selectedRegion = null;
+            let score = 0;
+            let level = 1;
+            let timeLeft = 60;
+            let timer;
+            
+            // DOM elements
+            const weatherTypeEl = document.getElementById('weatherType');
+            const weatherTempEl = document.getElementById('weatherTemp');
+            const weatherRainEl = document.getElementById('weatherRain');
+            const weatherWindEl = document.getElementById('weatherWind');
+            const weatherSeasonEl = document.getElementById('weatherSeason');
+            
+            const statusMessageEl = document.getElementById('statusMessage');
+            const scoreEl = document.getElementById('score');
+            const levelEl = document.getElementById('level');
+            const timeEl = document.getElementById('time');
+            
+            const weatherMapEl = document.getElementById('weatherMap');
+            
+            // Initialize the game
+            function initGame() {
+                loadWeatherPattern(currentPatternIndex);
+                createRegions();
+                updateStatusMessage();
+                startTimer();
+            }
+            
+            // Load weather pattern data
+            function loadWeatherPattern(index) {
+                const pattern = weatherPatterns[index];
+                weatherTypeEl.textContent = pattern.type;
+                weatherTempEl.textContent = pattern.temp;
+                weatherRainEl.textContent = pattern.rain;
+                weatherWindEl.textContent = pattern.wind;
+                weatherSeasonEl.textContent = pattern.season;
+            }
+            
+            // Create regions on the map
+            function createRegions() {
+                weatherMapEl.innerHTML = '';
+                
+                regions.forEach(region => {
+                    const regionEl = document.createElement('div');
+                    regionEl.className = `region ${region.id}`;
+                    regionEl.style.top = region.top;
+                    regionEl.style.left = region.left;
+                    regionEl.style.width = region.width;
+                    regionEl.style.height = region.height;
+                    regionEl.textContent = region.name;
+                    regionEl.dataset.id = region.id;
+                    
+                    regionEl.addEventListener('click', function() {
+                        selectedRegion = this.dataset.id;
+                        highlightSelectedRegion();
+                        statusMessageEl.textContent = `Selected: ${region.name}. Click "Next Pattern" to check your answer.`;
+                        statusMessageEl.className = 'status warning';
+                    });
+                    
+                    weatherMapEl.appendChild(regionEl);
+                });
+            }
+            
+            // Highlight the selected region
+            function highlightSelectedRegion() {
+                const regionEls = document.querySelectorAll('.region');
+                regionEls.forEach(region => {
+                    region.style.boxShadow = 'inset 0 0 15px rgba(0, 0, 0, 0.3)';
+                });
+                
+                if (selectedRegion !== null) {
+                    const selectedEl = document.querySelector(`[data-id="${selectedRegion}"]`);
+                    selectedEl.style.boxShadow = '0 0 15px 5px rgba(255, 255, 255, 0.8)';
+                }
+            }
+            
+            // Update status message
+            function updateStatusMessage() {
+                const pattern = weatherPatterns[currentPatternIndex];
+                statusMessageEl.textContent = `Select the region where the ${pattern.type} weather pattern is commonly found`;
+                statusMessageEl.className = 'status';
+            }
+            
+            // Check if the selected region matches the pattern
+            function checkAnswer() {
+                if (selectedRegion === null) {
+                    statusMessageEl.textContent = 'Please select a region on the map first!';
+                    statusMessageEl.className = 'status warning';
+                    return false;
+                }
+                
+                const pattern = weatherPatterns[currentPatternIndex];
+                if (selectedRegion === pattern.region) {
+                    score += level * 10;
+                    scoreEl.textContent = score;
+                    
+                    if (score >= level * 100) {
+                        level++;
+                        levelEl.textContent = level;
+                        timeLeft += 30;
+                        timeEl.textContent = timeLeft;
+                    }
+                    
+                    statusMessageEl.textContent = `Correct! ${pattern.description}`;
+                    statusMessageEl.className = 'status success';
+                    return true;
+                } else {
+                    statusMessageEl.textContent = `Not quite. The ${pattern.type} pattern is typically found in ${pattern.region} regions.`;
+                    statusMessageEl.className = 'status warning';
+                    return false;
+                }
+            }
+            
+            // Move to the next weather pattern
+            function nextPattern() {
+                if (checkAnswer() || selectedRegion === null) {
+                    currentPatternIndex = (currentPatternIndex + 1) % weatherPatterns.length;
+                    selectedRegion = null;
+                    loadWeatherPattern(currentPatternIndex);
+                    highlightSelectedRegion();
+                    updateStatusMessage();
+                }
+            }
+            
+            // Provide a hint
+            function provideHint() {
+                const pattern = weatherPatterns[currentPatternIndex];
+                const region = regions.find(r => r.id === pattern.region);
+                statusMessageEl.textContent = `Hint: The ${pattern.type} pattern is often found in ${region.name} regions.`;
+                statusMessageEl.className = 'status warning';
+            }
+            
+            // Start the game timer
+            function startTimer() {
+                clearInterval(timer);
+                timer = setInterval(function() {
+                    timeLeft--;
+                    timeEl.textContent = timeLeft;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        statusMessageEl.textContent = `Time's up! Final score: ${score}`;
+                        statusMessageEl.className = 'status warning';
+                    }
+                }, 1000);
+            }
+            
+            // Add event listeners for climate factor buttons
+            document.getElementById('btnLatitude').addEventListener('click', function() {
+                statusMessageEl.textContent = "Latitude affects temperature. Areas near the equator receive more direct sunlight and are warmer.";
+                statusMessageEl.className = 'status warning';
+            });
+            
+            document.getElementById('btnOceanCurrents').addEventListener('click', function() {
+                statusMessageEl.textContent = "Ocean currents redistribute heat. Warm currents warm nearby coasts, cold currents cool them.";
+                statusMessageEl.className = 'status warning';
+            });
+            
+            document.getElementById('btnTopography').addEventListener('click', function() {
+                statusMessageEl.textContent = "Topography affects weather. Mountains can block or redirect air flow and create rain shadows.";
+                statusMessageEl.className = 'status warning';
+            });
+            
+            document.getElementById('btnAirMasses').addEventListener('click', function() {
+                statusMessageEl.textContent = "Air masses bring characteristic weather. Continental air is dry, maritime air is moist.";
+                statusMessageEl.className = 'status warning';
+            });
+            
+            document.getElementById('btnElevation').addEventListener('click', function() {
+                statusMessageEl.textContent = "Elevation affects temperature. Temperature decreases by about 6.5°C for every 1000m increase in elevation.";
+                statusMessageEl.className = 'status warning';
+            });
+            
+            document.getElementById('btnVegetation').addEventListener('click', function() {
+                statusMessageEl.textContent = "Vegetation affects local climate. Forests can increase humidity and moderate temperatures.";
+                statusMessageEl.className = 'status warning';
+            });
+            
+            document.getElementById('hintBtn').addEventListener('click', provideHint);
+            document.getElementById('nextPattern').addEventListener('click', nextPattern);
+            
+            // Initialize the game
+            initGame();
+        });
+    </script>
+</body>
+</html>
