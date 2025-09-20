@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algebra Practice: Solve for X</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #e6e6e6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(30, 30, 50, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 800px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(70, 130, 180, 0.1) 0%, transparent 70%);
+            transform: rotate(30deg);
+            z-index: -1;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #4fc3f7;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .language-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .lang-btn {
+            background: rgba(60, 90, 150, 0.7);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .lang-btn:hover {
+            background: rgba(80, 120, 200, 0.9);
+            transform: translateY(-2px);
+        }
+        
+        .lang-btn.active {
+            background: rgba(30, 180, 230, 0.9);
+            box-shadow: 0 0 15px rgba(30, 180, 230, 0.5);
+        }
+        
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+        }
+        
+        .equation-container {
+            background: rgba(40, 40, 70, 0.8);
+            border-radius: 12px;
+            padding: 25px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .equation {
+            font-size: 2.8rem;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            color: #76ff03;
+            text-shadow: 0 0 5px rgba(118, 255, 3, 0.4);
+        }
+        
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 15px;
+        }
+        
+        input {
+            background: rgba(50, 50, 80, 0.9);
+            border: 2px solid #4fc3f7;
+            border-radius: 8px;
+            color: white;
+            font-size: 1.5rem;
+            padding: 15px;
+            text-align: center;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #76ff03;
+            box-shadow: 0 0 10px rgba(118, 255, 3, 0.5);
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+        }
+        
+        button {
+            flex: 1;
+            background: linear-gradient(to bottom, #4fc3f7, #2979ff);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        #submit-btn {
+            background: linear-gradient(to bottom, #76ff03, #64dd17);
+        }
+        
+        #new-equation-btn {
+            background: linear-gradient(to bottom, #ff9800, #f57c00);
+        }
+        
+        .score-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 15px;
+        }
+        
+        .score-box {
+            background: rgba(40, 40, 70, 0.8);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            flex: 1;
+            margin: 0 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .score-title {
+            font-size: 1rem;
+            color: #4fc3f7;
+            margin-bottom: 5px;
+        }
+        
+        .score-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #76ff03;
+        }
+        
+        .message {
+            height: 30px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-top: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .correct {
+            color: #76ff03;
+            text-shadow: 0 0 5px rgba(118, 255, 3, 0.4);
+        }
+        
+        .incorrect {
+            color: #ff5252;
+            text-shadow: 0 0 5px rgba(255, 82, 82, 0.4);
+        }
+        
+        .instructions {
+            background: rgba(40, 40, 70, 0.8);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .instructions h2 {
+            color: #4fc3f7;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .instructions ul {
+            list-style-type: none;
+            padding: 0 15px;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .instructions li::before {
+            content: "•";
+            color: #76ff03;
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-right: 10px;
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .equation {
+                font-size: 2rem;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            .score-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .score-box {
+                margin: 0;
+            }
+            
+            .language-selector {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 id="title">Algebra Practice: Solve for X</h1>
+            <div class="language-selector">
+                <button class="lang-btn active" data-lang="english">
+                    <span>🇺🇸</span> English
+                </button>
+                <button class="lang-btn" data-lang="hindi">
+                    <span>🇮🇳</span> Hindi
+                </button>
+                <button class="lang-btn" data-lang="odia">
+                    <span>🇮🇳</span> Odia
+                </button>
+            </div>
+        </header>
+        
+        <div class="game-area">
+            <div class="equation-container">
+                <div id="equation-prompt">Solve for x:</div>
+                <div class="equation" id="equation">3x + 5 = 20</div>
+            </div>
+            
+            <div class="input-container">
+                <input type="text" id="answer-input" placeholder="Enter value of x">
+                <div class="message" id="message"></div>
+            </div>
+            
+            <div class="buttons">
+                <button id="submit-btn">Submit Answer</button>
+                <button id="new-equation-btn">New Equation</button>
+            </div>
+            
+            <div class="score-container">
+                <div class="score-box">
+                    <div class="score-title" id="score-label">Score</div>
+                    <div class="score-value" id="score">0</div>
+                </div>
+                
+                <div class="score-box">
+                    <div class="score-title" id="level-label">Level</div>
+                    <div class="score-value" id="level">1</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h2 id="instructions-title">How to Play</h2>
+            <ul>
+                <li id="instruction-1">Solve the algebraic equation for x</li>
+                <li id="instruction-2">Enter your answer in the input field</li>
+                <li id="instruction-3">Click Submit or press Enter to check your answer</li>
+                <li id="instruction-4">Get points for correct answers</li>
+                <li id="instruction-5">Difficulty increases as you level up</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Language texts
+        const languages = {
+            english: {
+                title: "Algebra Practice: Solve for X",
+                equationPrompt: "Solve for x:",
+                inputPlaceholder: "Enter value of x",
+                submitBtn: "Submit Answer",
+                newEquationBtn: "New Equation",
+                scoreLabel: "Score",
+                levelLabel: "Level",
+                instructionsTitle: "How to Play",
+                instructions: [
+                    "Solve the algebraic equation for x",
+                    "Enter your answer in the input field",
+                    "Click Submit or press Enter to check your answer",
+                    "Get points for correct answers",
+                    "Difficulty increases as you level up"
+                ],
+                correct: "Correct! +1 point",
+                incorrect: "Incorrect! Try again",
+                levelUp: "Level Up! Now at Level "
+            },
+            hindi: {
+                title: "बीजगणित अभ्यास: X का मान ज्ञात करें",
+                equationPrompt: "x का मान ज्ञात करें:",
+                inputPlaceholder: "x का मान दर्ज करें",
+                submitBtn: "उत्तर जमा करें",
+                newEquationBtn: "नया समीकरण",
+                scoreLabel: "स्कोर",
+                levelLabel: "स्तर",
+                instructionsTitle: "कैसे खेलें",
+                instructions: [
+                    "x के लिए बीजगणितीय समीकरण को हल करें",
+                    "इनपुट फ़ील्ड में अपना उत्तर दर्ज करें",
+                    "उत्तर जांचने के लिए सबमिट पर क्लिक करें या एंटर दबाएं",
+                    "सही उत्तरों के लिए अंक प्राप्त करें",
+                    "स्तर बढ़ने पर कठिनाई बढ़ जाती है"
+                ],
+                correct: "सही! +1 अंक",
+                incorrect: "गलत! फिर से कोशिश करें",
+                levelUp: "स्तर ऊपर! अब स्तर पर "
+            },
+            odia: {
+                title: "ବୀଜଗଣିତ ଅଭ୍ୟାସ: X ର ମୂଲ୍ୟ ନିର୍ଣ୍ଣୟ କରନ୍ତୁ",
+                equationPrompt: "x ପାଇଁ ସମାଧାନ କରନ୍ତୁ:",
+                inputPlaceholder: "x ର ମୂଲ୍ୟ ପ୍ରବେଶ କରନ୍ତୁ",
+                submitBtn: "ଉତ୍ତର ଦାଖଲ କରନ୍ତୁ",
+                newEquationBtn: "ନୂତନ ସମୀକରଣ",
+                scoreLabel: "ସ୍କୋର",
+                levelLabel: "ସ୍ତର",
+                instructionsTitle: "କିପରି ଖେଳିବେ",
+                instructions: [
+                    "x ପାଇଁ ବୀଜଗଣିତ ସମୀକରଣ ସମାଧାନ କରନ୍ତୁ",
+                    "ଇନପୁଟ୍ କ୍ଷେତ୍ରରେ ଆପଣଙ୍କର ଉତ୍ତର ପ୍ରବେଶ କରନ୍ତୁ",
+                    "ଉତ୍ତର ଯାଞ୍ଚ କରିବାକୁ ସବମିଟ୍ କ୍ଲିକ୍ କରନ୍ତୁ କିମ୍ବା ଏଣ୍ଟର୍ ଦବାନ୍ତୁ",
+                    "ସଠିକ୍ ଉତ୍ତର ପାଇଁ ପଏଣ୍ଟ୍ ପ୍ରାପ୍ତ କରନ୍ତୁ",
+                    "ସ୍ତର ବୃଦ୍ଧି ସହିତ ଅସୁବିଧା ବୃଦ୍ଧି ପାଏ"
+                ],
+                correct: "ଠିକ୍! +1 ପଏଣ୍ଟ",
+                incorrect: "ଭୁଲ୍! ପୁନର୍ବାର ଚେଷ୍ଟା କରନ୍ତୁ",
+                levelUp: "ଲେଭଲ୍ ଅପ୍! ବର୍ତ୍ତମାନ ସ୍ତରରେ "
+            }
+        };
+
+        // Game state
+        let currentLanguage = 'english';
+        let score = 0;
+        let level = 1;
+        let currentEquation = '';
+        let currentSolution = 0;
+
+        // DOM elements
+        const equationElement = document.getElementById('equation');
+        const equationPromptElement = document.getElementById('equation-prompt');
+        const answerInput = document.getElementById('answer-input');
+        const messageElement = document.getElementById('message');
+        const scoreElement = document.getElementById('score');
+        const levelElement = document.getElementById('level');
+        const submitButton = document.getElementById('submit-btn');
+        const newEquationButton = document.getElementById('new-equation-btn');
+        const langButtons = document.querySelectorAll('.lang-btn');
+        
+        // Initialize the game
+        function initGame() {
+            updateLanguage();
+            generateEquation();
+            updateUI();
+            
+            // Event listeners
+            submitButton.addEventListener('click', checkAnswer);
+            newEquationButton.addEventListener('click', generateEquation);
+            answerInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkAnswer();
+                }
+            });
+            
+            // Language switcher
+            langButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    langButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    currentLanguage = this.getAttribute('data-lang');
+                    updateLanguage();
+                    updateUI();
+                });
+            });
+        }
+        
+        // Update language-specific texts
+        function updateLanguage() {
+            const lang = languages[currentLanguage];
+            
+            document.getElementById('title').textContent = lang.title;
+            equationPromptElement.textContent = lang.equationPrompt;
+            answerInput.placeholder = lang.inputPlaceholder;
+            submitButton.textContent = lang.submitBtn;
+            newEquationButton.textContent = lang.newEquationBtn;
+            document.getElementById('score-label').textContent = lang.scoreLabel;
+            document.getElementById('level-label').textContent = lang.levelLabel;
+            document.getElementById('instructions-title').textContent = lang.instructionsTitle;
+            
+            const instructions = lang.instructions;
+            for (let i = 0; i < instructions.length; i++) {
+                document.getElementById(`instruction-${i+1}`).textContent = instructions[i];
+            }
+        }
+        
+        // Update UI elements
+        function updateUI() {
+            scoreElement.textContent = score;
+            levelElement.textContent = level;
+        }
+        
+        // Generate a new equation based on current level
+        function generateEquation() {
+            messageElement.textContent = '';
+            messageElement.className = 'message';
+            answerInput.value = '';
+            answerInput.focus();
+            
+            let equation, solution;
+            
+            if (level === 1) {
+                // Simple equations: ax + b = c
+                const a = Math.floor(Math.random() * 5) + 1;
+                const b = Math.floor(Math.random() * 10) + 1;
+                const c = a * (Math.floor(Math.random() * 10) + 1) + b;
+                solution = (c - b) / a;
+                equation = `${a}x + ${b} = ${c}`;
+            } else if (level === 2) {
+                // Equations: ax - b = c
+                const a = Math.floor(Math.random() * 6) + 1;
+                const b = Math.floor(Math.random() * 12) + 1;
+                const c = a * (Math.floor(Math.random() * 10) + 1) - b;
+                solution = (c + b) / a;
+                equation = `${a}x - ${b} = ${c}`;
+            } else {
+                // Equations: ax + b = cx + d
+                const a = Math.floor(Math.random() * 8) + 2;
+                const b = Math.floor(Math.random() * 15) + 1;
+                const c = Math.floor(Math.random() * 7) + 1;
+                const d = a * (Math.floor(Math.random() * 10) + 1) - b + c * (Math.floor(Math.random() * 5) + 1);
+                solution = (d - b) / (a - c);
+                equation = `${a}x + ${b} = ${c}x + ${d}`;
+            }
+            
+            currentEquation = equation;
+            currentSolution = solution;
+            equationElement.textContent = equation;
+        }
+        
+        // Check if the user's answer is correct
+        function checkAnswer() {
+            const userAnswer = parseFloat(answerInput.value);
+            
+            if (isNaN(userAnswer)) {
+                messageElement.textContent = languages[currentLanguage].incorrect;
+                messageElement.className = 'message incorrect';
+                return;
+            }
+            
+            // Allow a small margin of error for floating point numbers
+            if (Math.abs(userAnswer - currentSolution) < 0.001) {
+                // Correct answer
+                score++;
+                messageElement.textContent = languages[currentLanguage].correct;
+                messageElement.className = 'message correct';
+                
+                // Level up every 5 points
+                if (score % 5 === 0 && level < 3) {
+                    level++;
+                    messageElement.textContent += ` | ${languages[currentLanguage].levelUp}${level}`;
+                }
+                
+                updateUI();
+                setTimeout(generateEquation, 1500);
+            } else {
+                // Incorrect answer
+                messageElement.textContent = languages[currentLanguage].incorrect;
+                messageElement.className = 'message incorrect';
+            }
+        }
+        
+        // Start the game when the page loads
+        window.onload = initGame;
+    </script>
+</body>
+</html>
