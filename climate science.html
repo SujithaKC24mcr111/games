@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Climate Science: Weather Patterns</title>
+    <title>जलवायु विज्ञान: मौसम पैटर्न | ଜଳବାୟୁ ବିଜ୍ଞାନ: ପାଣିପାଗ ପ୍ରକାର</title>
     <style>
         * {
             box-sizing: border-box;
@@ -36,6 +36,31 @@
             background: rgba(0, 0, 0, 0.3);
             border-radius: 15px;
             margin-bottom: 10px;
+            position: relative;
+        }
+        
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .lang-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .lang-btn.active {
+            background: #2ecc71;
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
         }
         
         h1 {
@@ -100,6 +125,8 @@
             font-weight: bold;
             text-shadow: 1px 1px 2px black;
             box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            padding: 10px;
         }
         
         .region:hover {
@@ -265,79 +292,90 @@
             .control-panel {
                 grid-template-columns: 1fr;
             }
+            
+            .language-selector {
+                position: static;
+                justify-content: center;
+                margin-bottom: 15px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Climate Science: Weather Patterns</h1>
-            <p>Match weather patterns to geographical regions and learn about climate factors</p>
+            <div class="language-selector">
+                <button class="lang-btn active" id="hindiBtn">हिंदी</button>
+                <button class="lang-btn" id="odiaBtn">ଓଡିଆ</button>
+                <button class="lang-btn" id="englishBtn">English</button>
+            </div>
+            <h1 id="headerTitle">जलवायु विज्ञान: मौसम पैटर्न</h1>
+            <p id="headerSubtitle">भौगोलिक क्षेत्रों से मौसम पैटर्न का मिलान करें और जलवायु कारकों के बारे में जानें</p>
         </header>
         
         <div class="game-area">
             <div class="game-board">
-                <h2>World Weather Map</h2>
+                <h2 id="mapTitle">विश्व मौसम मानचित्र</h2>
                 <div class="weather-map" id="weatherMap">
                     <!-- Regions will be added by JavaScript -->
                 </div>
                 <div class="score-board">
-                    <div>Score: <span id="score">0</span></div>
-                    <div>Level: <span id="level">1</span></div>
-                    <div>Time: <span id="time">60</span>s</div>
+                    <div id="scoreText">स्कोर: <span id="score">0</span></div>
+                    <div id="levelText">स्तर: <span id="level">1</span></div>
+                    <div id="timeText">समय: <span id="time">60</span>s</div>
                 </div>
             </div>
             
             <div class="controls">
-                <h2>Weather Pattern</h2>
+                <h2 id="weatherTitle">मौसम पैटर्न</h2>
                 <div class="weather-card">
-                    <div class="weather-type" id="weatherType">Monsoon</div>
+                    <div class="weather-type" id="weatherType">मानसून</div>
                     <div class="weather-details">
                         <div class="detail">
-                            <div>Temperature</div>
+                            <div id="tempText">तापमान</div>
                             <div class="detail-value" id="weatherTemp">28°C</div>
                         </div>
                         <div class="detail">
-                            <div>Rainfall</div>
-                            <div class="detail-value" id="weatherRain">High</div>
+                            <div id="rainText">वर्षा</div>
+                            <div class="detail-value" id="weatherRain">उच्च</div>
                         </div>
                         <div class="detail">
-                            <div>Wind</div>
-                            <div class="detail-value" id="weatherWind">Strong</div>
+                            <div id="windText">हवा</div>
+                            <div class="detail-value" id="weatherWind">तीव्र</div>
                         </div>
                         <div class="detail">
-                            <div>Season</div>
-                            <div class="detail-value" id="weatherSeason">Summer</div>
+                            <div id="seasonText">मौसम</div>
+                            <div class="detail-value" id="weatherSeason">ग्रीष्म</div>
                         </div>
                     </div>
                 </div>
                 
-                <h2>Climate Factors</h2>
+                <h2 id="factorsTitle">जलवायु कारक</h2>
                 <div class="control-panel">
-                    <button class="control-btn temperature" id="btnLatitude">Latitude</button>
-                    <button class="control-btn precipitation" id="btnOceanCurrents">Ocean Currents</button>
-                    <button class="control-btn wind" id="btnTopography">Topography</button>
-                    <button class="control-btn pressure" id="btnAirMasses">Air Masses</button>
-                    <button class="control-btn temperature" id="btnElevation">Elevation</button>
-                    <button class="control-btn precipitation" id="btnVegetation">Vegetation</button>
+                    <button class="control-btn temperature" id="btnLatitude">अक्षांश</button>
+                    <button class="control-btn precipitation" id="btnOceanCurrents">समुद्री धाराएं</button>
+                    <button class="control-btn wind" id="btnTopography">स्थलाकृति</button>
+                    <button class="control-btn pressure" id="btnAirMasses">वायु राशि</button>
+                    <button class="control-btn temperature" id="btnElevation">ऊंचाई</button>
+                    <button class="control-btn precipitation" id="btnVegetation">वनस्पति</button>
                 </div>
                 
-                <button class="control-btn" id="hintBtn" style="width: 100%; background: #9b59b6;">Hint</button>
-                <button class="control-btn" id="nextPattern" style="width: 100%; background: #f39c12;">Next Pattern</button>
+                <button class="control-btn" id="hintBtn" style="width: 100%; background: #9b59b6;" data-hint="संकेत" data-hint-odia="ସୂଚନା" data-hint-eng="Hint">संकेत</button>
+                <button class="control-btn" id="nextPattern" style="width: 100%; background: #f39c12;" data-next="अगला पैटर्न" data-next-odia="ପରବର୍ତ୍ତୀ ପ୍ରକାର" data-next-eng="Next Pattern">अगला पैटर्न</button>
                 
-                <div class="status" id="statusMessage">Select the region where this weather pattern is commonly found</div>
+                <div class="status" id="statusMessage">उस क्षेत्र का चयन करें जहां यह मौसम पैटर्न आमतौर पर पाया जाता है</div>
             </div>
         </div>
         
         <div class="instructions">
-            <h2>How To Play</h2>
-            <ul>
-                <li>Study the weather pattern description in the Weather Card</li>
-                <li>Click on the world map region where you think this weather pattern is commonly found</li>
-                <li>Use the Climate Factors buttons to learn about what affects weather patterns</li>
-                <li>Click "Hint" if you need help identifying the region</li>
-                <li>Earn points for correct answers and advance to higher levels</li>
-                <li>Click "Next Pattern" to get a new weather pattern to identify</li>
+            <h2 id="instructionsTitle">कैसे खेलें</h2>
+            <ul id="instructionsList">
+                <li>मौसम कार्ड में मौसम पैटर्न विवरण का अध्ययन करें</li>
+                <li>विश्व मानचित्र पर उस क्षेत्र पर क्लिक करें जहां आपको लगता है कि यह मौसम पैटर्न पाया जाता है</li>
+                <li>जलवायु कारकों के बारे में जानने के लिए जलवायु कारक बटन का उपयोग करें</li>
+                <li>क्षेत्र की पहचान करने में सहायता के लिए "संकेत" पर क्लिक करें</li>
+                <li>सही उत्तरों के लिए अंक अर्जित करें और उच्च स्तरों तक आगे बढ़ें</li>
+                <li>एक नया मौसम पैटर्न पाने के लिए "अगला पैटर्न" पर क्लिक करें</li>
             </ul>
         </div>
     </div>
@@ -348,62 +386,123 @@
             const weatherPatterns = [
                 {
                     type: "Monsoon",
+                    typeHi: "मानसून",
+                    typeOr: "ମନ୍ସୁନ",
                     temp: "28°C",
                     rain: "High",
+                    rainHi: "उच्च",
+                    rainOr: "ଉଚ୍ଚ",
                     wind: "Strong",
+                    windHi: "तीव्र",
+                    windOr: "ଜୋର",
                     season: "Summer",
+                    seasonHi: "ग्रीष्म",
+                    seasonOr: "ଗ୍ରୀଷ୍ମ",
                     region: "tropical",
                     description: "Seasonal reversing wind accompanied by corresponding changes in precipitation.",
-                    factors: ["Differential heating", "Seasonal wind patterns", "Ocean temperatures"]
+                    descriptionHi: "मौसमी उलटने वाली हवा जिसमें वर्षा में संबंधित परिवर्तन होते हैं।",
+                    descriptionOr: "ଋତୁକାଳୀନ ବାତାସନ ଯାହା ବର୍ଷା ସହିତ ଜଡିତ ପରିବର୍ତ୍ତନଗୁଡିକ ସହିତ ଘଟେ |",
+                    factors: ["Differential heating", "Seasonal wind patterns", "Ocean temperatures"],
+                    factorsHi: ["विभेदक ताप", "मौसमी हवा के पैटर्न", "समुद्र का तापमान"],
+                    factorsOr: ["ପାର୍ଥକ୍ୟ ତାପନ", "ଋତୁକାଳୀନ ପବନ ପ୍ରକାର", "ମହାସାଗର ତାପମାତ୍ରା"]
                 },
                 {
                     type: "Blizzard",
+                    typeHi: "बर्फानी तूफान",
+                    typeOr: "ତୁଷାରଝଡ",
                     temp: "-15°C",
                     rain: "Snow",
+                    rainHi: "बर्फ",
+                    rainOr: "ତୁଷାର",
                     wind: "Very Strong",
+                    windHi: "अत्यंत तीव्र",
+                    windOr: "ଅତ୍ୟଧିକ ଜୋର",
                     season: "Winter",
+                    seasonHi: "शीत",
+                    seasonOr: "ଶୀତ",
                     region: "arctic",
                     description: "Severe snowstorm with high winds and low visibility.",
-                    factors: ["Cold air masses", "Moisture source", "Low pressure systems"]
+                    descriptionHi: "उच्च हवाओं और कम दृश्यता के साथ गंभीर बर्फीला तूफान।",
+                    descriptionOr: "ଉଚ୍ଚ ପବନ ଏବଂ କମ ଦୃଶ୍ୟମାନତା ସହିତ ଗମ୍ଭୀର ତୁଷାରଝଡ |",
+                    factors: ["Cold air masses", "Moisture source", "Low pressure systems"],
+                    factorsHi: ["ठंडी वायु राशि", "नमी स्रोत", "निम्न दबाव प्रणाली"],
+                    factorsOr: ["ଥଣ୍ଡା ବାୟୁ ପ୍ରମାଣ", "ଆର୍ଦ୍ରତା ଉତ୍ସ", "ନିମ୍ନ ଚାପ ପ୍ରଣାଳୀ"]
                 },
                 {
                     type: "Drought",
+                    typeHi: "सूखा",
+                    typeOr: "ଖରା",
                     temp: "35°C",
                     rain: "None",
+                    rainHi: "कोई नहीं",
+                    rainOr: "କିଛି ନାହିଁ",
                     wind: "Light",
+                    windHi: "हल्की",
+                    windOr: "ହାଲୁକା",
                     season: "All year",
+                    seasonHi: "सभी मौसम",
+                    seasonOr: "ସବୁ ଋତୁ",
                     region: "desert",
                     description: "Prolonged period of abnormally low rainfall, leading to water shortage.",
-                    factors: ["High pressure systems", "Rain shadow effect", "Climate change"]
-                },
-                {
-                    type: "Tornado",
-                    temp: "24°C",
-                    rain: "Heavy",
-                    wind: "Extreme",
-                    season: "Spring",
-                    region: "temperate",
-                    description: "Violently rotating column of air in contact with both the surface and a cumulonimbus cloud.",
-                    factors: ["Wind shear", "Instability", "Moisture", "Lift mechanism"]
-                },
-                {
-                    type: "Foehn Wind",
-                    temp: "20°C",
-                    rain: "Low",
-                    wind: "Strong",
-                    season: "All year",
-                    region: "mountain",
-                    description: "Type of dry, warm, down-slope wind that occurs in the lee of a mountain range.",
-                    factors: ["Orographic lift", "Adiabatic warming", "Pressure gradient"]
+                    descriptionHi: "असामान्य रूप से कम वर्षा की लंबी अवधि, जिससे पानी की कमी होती है।",
+                    descriptionOr: "ଅସ୍ୱାଭାବିକ ଭାବରେ କମ୍ ବର୍ଷା ହେତୁ ଜଳ ଅଭାବ ସୃଷ୍ଟି ହୁଏ |",
+                    factors: ["High pressure systems", "Rain shadow effect", "Climate change"],
+                    factorsHi: ["उच्च दबाव प्रणाली", "वर्षा छाया प्रभाव", "जलवायु परिवर्तन"],
+                    factorsOr: ["ଉଚ୍ଚ ଚାପ ପ୍ରଣାଳୀ", "ବର୍ଷା ଛାୟା ପ୍ରଭାବ", "ଜଳବାୟୁ ପରିବର୍ତ୍ତନ"]
                 }
             ];
             
             const regions = [
-                { id: "tropical", name: "Tropical", top: "60%", left: "75%", width: "20%", height: "25%" },
-                { id: "arctic", name: "Arctic", top: "5%", left: "25%", width: "30%", height: "20%" },
-                { id: "desert", name: "Desert", top: "40%", left: "40%", width: "20%", height: "20%" },
-                { id: "temperate", name: "Temperate", top: "25%", left: "25%", width: "35%", height: "25%" },
-                { id: "mountain", name: "Mountain", top: "30%", left: "60%", width: "15%", height: "30%" }
+                { 
+                    id: "tropical", 
+                    name: "Tropical", 
+                    nameHi: "उष्णकटिबंधीय", 
+                    nameOr: "ଉଷ୍ଣମଣ୍ଡଳୀୟ", 
+                    top: "60%", 
+                    left: "75%", 
+                    width: "20%", 
+                    height: "25%" 
+                },
+                { 
+                    id: "arctic", 
+                    name: "Arctic", 
+                    nameHi: "आर्कटिक", 
+                    nameOr: "ଆର୍କଟିକ୍", 
+                    top: "5%", 
+                    left: "25%", 
+                    width: "30%", 
+                    height: "20%" 
+                },
+                { 
+                    id: "desert", 
+                    name: "Desert", 
+                    nameHi: "मरुस्थल", 
+                    nameOr: "ମରୁଭୂମି", 
+                    top: "40%", 
+                    left: "40%", 
+                    width: "20%", 
+                    height: "20%" 
+                },
+                { 
+                    id: "temperate", 
+                    name: "Temperate", 
+                    nameHi: "समशीतोष्ण", 
+                    nameOr: "ନରମ", 
+                    top: "25%", 
+                    left: "25%", 
+                    width: "35%", 
+                    height: "25%" 
+                },
+                { 
+                    id: "mountain", 
+                    name: "Mountain", 
+                    nameHi: "पर्वत", 
+                    nameOr: "ପର୍ବତ", 
+                    top: "30%", 
+                    left: "60%", 
+                    width: "15%", 
+                    height: "30%" 
+                }
             ];
             
             let currentPatternIndex = 0;
@@ -412,6 +511,7 @@
             let level = 1;
             let timeLeft = 60;
             let timer;
+            let currentLanguage = 'hindi';
             
             // DOM elements
             const weatherTypeEl = document.getElementById('weatherType');
@@ -427,6 +527,24 @@
             
             const weatherMapEl = document.getElementById('weatherMap');
             
+            // Language elements
+            const headerTitleEl = document.getElementById('headerTitle');
+            const headerSubtitleEl = document.getElementById('headerSubtitle');
+            const mapTitleEl = document.getElementById('mapTitle');
+            const scoreTextEl = document.getElementById('scoreText');
+            const levelTextEl = document.getElementById('levelText');
+            const timeTextEl = document.getElementById('timeText');
+            const weatherTitleEl = document.getElementById('weatherTitle');
+            const tempTextEl = document.getElementById('tempText');
+            const rainTextEl = document.getElementById('rainText');
+            const windTextEl = document.getElementById('windText');
+            const seasonTextEl = document.getElementById('seasonText');
+            const factorsTitleEl = document.getElementById('factorsTitle');
+            const instructionsTitleEl = document.getElementById('instructionsTitle');
+            const instructionsListEl = document.getElementById('instructionsList');
+            const hintBtnEl = document.getElementById('hintBtn');
+            const nextPatternBtnEl = document.getElementById('nextPattern');
+            
             // Initialize the game
             function initGame() {
                 loadWeatherPattern(currentPatternIndex);
@@ -438,11 +556,25 @@
             // Load weather pattern data
             function loadWeatherPattern(index) {
                 const pattern = weatherPatterns[index];
-                weatherTypeEl.textContent = pattern.type;
+                
+                if (currentLanguage === 'hindi') {
+                    weatherTypeEl.textContent = pattern.typeHi;
+                    weatherRainEl.textContent = pattern.rainHi;
+                    weatherWindEl.textContent = pattern.windHi;
+                    weatherSeasonEl.textContent = pattern.seasonHi;
+                } else if (currentLanguage === 'odia') {
+                    weatherTypeEl.textContent = pattern.typeOr;
+                    weatherRainEl.textContent = pattern.rainOr;
+                    weatherWindEl.textContent = pattern.windOr;
+                    weatherSeasonEl.textContent = pattern.seasonOr;
+                } else {
+                    weatherTypeEl.textContent = pattern.type;
+                    weatherRainEl.textContent = pattern.rain;
+                    weatherWindEl.textContent = pattern.wind;
+                    weatherSeasonEl.textContent = pattern.season;
+                }
+                
                 weatherTempEl.textContent = pattern.temp;
-                weatherRainEl.textContent = pattern.rain;
-                weatherWindEl.textContent = pattern.wind;
-                weatherSeasonEl.textContent = pattern.season;
             }
             
             // Create regions on the map
@@ -456,13 +588,29 @@
                     regionEl.style.left = region.left;
                     regionEl.style.width = region.width;
                     regionEl.style.height = region.height;
-                    regionEl.textContent = region.name;
+                    
+                    if (currentLanguage === 'hindi') {
+                        regionEl.textContent = region.nameHi;
+                    } else if (currentLanguage === 'odia') {
+                        regionEl.textContent = region.nameOr;
+                    } else {
+                        regionEl.textContent = region.name;
+                    }
+                    
                     regionEl.dataset.id = region.id;
                     
                     regionEl.addEventListener('click', function() {
                         selectedRegion = this.dataset.id;
                         highlightSelectedRegion();
-                        statusMessageEl.textContent = `Selected: ${region.name}. Click "Next Pattern" to check your answer.`;
+                        
+                        if (currentLanguage === 'hindi') {
+                            statusMessageEl.textContent = `चयनित: ${region.nameHi}. उत्तर जांचने के लिए "अगला पैटर्न" पर क्लिक करें।`;
+                        } else if (currentLanguage === 'odia') {
+                            statusMessageEl.textContent = `ବଚ୍ଛିତ: ${region.nameOr}. ଉତ୍ତର ଯାଞ୍ଚ କରିବାକୁ "ପରବର୍ତ୍ତୀ ପ୍ରକାର" କ୍ଲିକ୍ କରନ୍ତୁ |`;
+                        } else {
+                            statusMessageEl.textContent = `Selected: ${region.name}. Click "Next Pattern" to check your answer.`;
+                        }
+                        
                         statusMessageEl.className = 'status warning';
                     });
                     
@@ -486,14 +634,29 @@
             // Update status message
             function updateStatusMessage() {
                 const pattern = weatherPatterns[currentPatternIndex];
-                statusMessageEl.textContent = `Select the region where the ${pattern.type} weather pattern is commonly found`;
+                
+                if (currentLanguage === 'hindi') {
+                    statusMessageEl.textContent = `उस क्षेत्र का चयन करें जहां ${pattern.typeHi} मौसम पैटर्न आमतौर पर पाया जाता है`;
+                } else if (currentLanguage === 'odia') {
+                    statusMessageEl.textContent = `ସେହି ଅଞ୍ଚଳ ବାଛନ୍ତୁ ଯେଉଁଠାରେ ${pattern.typeOr} ପାଣିପାଗ ପ୍ରକାର ସାଧାରଣତ found ଦେଖାଯାଏ |`;
+                } else {
+                    statusMessageEl.textContent = `Select the region where the ${pattern.type} weather pattern is commonly found`;
+                }
+                
                 statusMessageEl.className = 'status';
             }
             
             // Check if the selected region matches the pattern
             function checkAnswer() {
                 if (selectedRegion === null) {
-                    statusMessageEl.textContent = 'Please select a region on the map first!';
+                    if (currentLanguage === 'hindi') {
+                        statusMessageEl.textContent = 'कृपया पहले मानचित्र पर एक क्षेत्र का चयन करें!';
+                    } else if (currentLanguage === 'odia') {
+                        statusMessageEl.textContent = 'ଦୟାକରି ପ୍ରଥମେ ମାନଚିତ୍ରରେ ଏକ ଅଞ୍ଚଳ ବାଛନ୍ତୁ!';
+                    } else {
+                        statusMessageEl.textContent = 'Please select a region on the map first!';
+                    }
+                    
                     statusMessageEl.className = 'status warning';
                     return false;
                 }
@@ -510,11 +673,27 @@
                         timeEl.textContent = timeLeft;
                     }
                     
-                    statusMessageEl.textContent = `Correct! ${pattern.description}`;
+                    if (currentLanguage === 'hindi') {
+                        statusMessageEl.textContent = `सही! ${pattern.descriptionHi}`;
+                    } else if (currentLanguage === 'odia') {
+                        statusMessageEl.textContent = `ଠିକ୍! ${pattern.descriptionOr}`;
+                    } else {
+                        statusMessageEl.textContent = `Correct! ${pattern.description}`;
+                    }
+                    
                     statusMessageEl.className = 'status success';
                     return true;
                 } else {
-                    statusMessageEl.textContent = `Not quite. The ${pattern.type} pattern is typically found in ${pattern.region} regions.`;
+                    const correctRegion = regions.find(r => r.id === pattern.region);
+                    
+                    if (currentLanguage === 'hindi') {
+                        statusMessageEl.textContent = `ठीक नहीं है। आपने ${regions.find(r => r.id === selectedRegion).nameHi} चुना है लेकिन सही उत्तर ${correctRegion.nameHi} क्षेत्र है।`;
+                    } else if (currentLanguage === 'odia') {
+                        statusMessageEl.textContent = `ଠିକ୍ ନୁହେଁ। ଆପଣ ${regions.find(r => r.id === selectedRegion).nameOr} ବାଛିଛନ୍ତି କିନ୍ତୁ ସଠିକ୍ ଉତ୍ତର ହେଉଛି ${correctRegion.nameOr} ଅଞ୍ଚଳ |`;
+                    } else {
+                        statusMessageEl.textContent = `Not quite. You selected ${regions.find(r => r.id === selectedRegion).name} but the correct answer is ${correctRegion.name} region.`;
+                    }
+                    
                     statusMessageEl.className = 'status warning';
                     return false;
                 }
@@ -535,7 +714,15 @@
             function provideHint() {
                 const pattern = weatherPatterns[currentPatternIndex];
                 const region = regions.find(r => r.id === pattern.region);
-                statusMessageEl.textContent = `Hint: The ${pattern.type} pattern is often found in ${region.name} regions.`;
+                
+                if (currentLanguage === 'hindi') {
+                    statusMessageEl.textContent = `संकेत: ${pattern.typeHi} पैटर्न अक्सर ${region.nameHi} क्षेत्रों में पाया जाता है।`;
+                } else if (currentLanguage === 'odia') {
+                    statusMessageEl.textContent = `ସୂଚନା: ${pattern.typeOr} ପ୍ରକାର ଅକ୍ସରଂ ${region.nameOr} ଅଞ୍ଚଳରେ ଦେଖାଯାଏ |`;
+                } else {
+                    statusMessageEl.textContent = `Hint: The ${pattern.type} pattern is often found in ${region.name} regions.`;
+                }
+                
                 statusMessageEl.className = 'status warning';
             }
             
@@ -548,45 +735,227 @@
                     
                     if (timeLeft <= 0) {
                         clearInterval(timer);
-                        statusMessageEl.textContent = `Time's up! Final score: ${score}`;
+                        
+                        if (currentLanguage === 'hindi') {
+                            statusMessageEl.textContent = `समय समाप्त! अंतिम स्कोर: ${score}`;
+                        } else if (currentLanguage === 'odia') {
+                            statusMessageEl.textContent = `ସମୟ ସମାପ୍ତ! ଅନ୍ତିମ ସ୍କୋର: ${score}`;
+                        } else {
+                            statusMessageEl.textContent = `Time's up! Final score: ${score}`;
+                        }
+                        
                         statusMessageEl.className = 'status warning';
                     }
                 }, 1000);
             }
             
+            // Change language
+            function changeLanguage(lang) {
+                currentLanguage = lang;
+                
+                // Update UI elements based on language
+                if (lang === 'hindi') {
+                    headerTitleEl.textContent = "जलवायु विज्ञान: मौसम पैटर्न";
+                    headerSubtitleEl.textContent = "भौगोलिक क्षेत्रों से मौसम पैटर्न का मिलान करें और जलवायु कारकों के बारे में जानें";
+                    mapTitleEl.textContent = "विश्व मौसम मानचित्र";
+                    scoreTextEl.textContent = "स्कोर:";
+                    levelTextEl.textContent = "स्तर:";
+                    timeTextEl.textContent = "समय:";
+                    weatherTitleEl.textContent = "मौसम पैटर्न";
+                    tempTextEl.textContent = "तापमान";
+                    rainTextEl.textContent = "वर्षा";
+                    windTextEl.textContent = "हवा";
+                    seasonTextEl.textContent = "मौसम";
+                    factorsTitleEl.textContent = "जलवायु कारक";
+                    instructionsTitleEl.textContent = "कैसे खेलें";
+                    
+                    instructionsListEl.innerHTML = `
+                        <li>मौसम कार्ड में मौसम पैटर्न विवरण का अध्ययन करें</li>
+                        <li>विश्व मानचित्र पर उस क्षेत्र पर क्लिक करें जहां आपको लगता है कि यह मौसम पैटर्न पाया जाता है</li>
+                        <li>जलवायु कारकों के बारे में जानने के लिए जलवायु कारक बटन का उपयोग करें</li>
+                        <li>क्षेत्र की पहचान करने में सहायता के लिए "संकेत" पर क्लिक करें</li>
+                        <li>सही उत्तरों के लिए अंक अर्जित करें और उच्च स्तरों तक आगे बढ़ें</li>
+                        <li>एक नया मौसम पैटर्न पाने के लिए "अगला पैटर्न" पर क्लिक करें</li>
+                    `;
+                    
+                    hintBtnEl.textContent = "संकेत";
+                    nextPatternBtnEl.textContent = "अगला पैटर्न";
+                    
+                    document.getElementById('btnLatitude').textContent = "अक्षांश";
+                    document.getElementById('btnOceanCurrents').textContent = "समुद्री धाराएं";
+                    document.getElementById('btnTopography').textContent = "स्थलाकृति";
+                    document.getElementById('btnAirMasses').textContent = "वायु राशि";
+                    document.getElementById('btnElevation').textContent = "ऊंचाई";
+                    document.getElementById('btnVegetation').textContent = "वनस्पति";
+                    
+                } else if (lang === 'odia') {
+                    headerTitleEl.textContent = "ଜଳବାୟୁ ବିଜ୍ଞାନ: ପାଣିପାଗ ପ୍ରକାର";
+                    headerSubtitleEl.textContent = "ଭୌଗୋଳିକ ଅଞ୍ଚଳଗୁଡିକ ସହିତ ପାଣିପାଗ ପ୍ରକାରଗୁଡିକୁ ମିଳାନ୍ତୁ ଏବଂ ଜଳବାୟୁ କାରକଗୁଡିକ ବିଷୟରେ ଶିଖନ୍ତୁ |";
+                    mapTitleEl.textContent = "ବିଶ୍ୱ ପାଣିପାଗ ମାନଚିତ୍ର";
+                    scoreTextEl.textContent = "ସ୍କୋର:";
+                    levelTextEl.textContent = "ସ୍ତର:";
+                    timeTextEl.textContent = "ସମୟ:";
+                    weatherTitleEl.textContent = "ପାଣିପାଗ ପ୍ରକାର";
+                    tempTextEl.textContent = "ତାପମାତ୍ରା";
+                    rainTextEl.textContent = "ବର୍ଷା";
+                    windTextEl.textContent = "ପବନ";
+                    seasonTextEl.textContent = "ଋତୁ";
+                    factorsTitleEl.textContent = "ଜଳବାୟୁ କାରକ";
+                    instructionsTitleEl.textContent = "କିପରି ଖେଳିବେ";
+                    
+                    instructionsListEl.innerHTML = `
+                        <li>ପାଣିପାଗ କାର୍ଡରେ ପାଣିପାଗ ପ୍ରକାର ବର୍ଣ୍ଣନା ଅଧ୍ୟୟନ କରନ୍ତୁ</li>
+                        <li>ବିଶ୍ୱ ମାନଚିତ୍ରରେ ସେହି ଅଞ୍ଚଳ ଉପରେ କ୍ଲିକ୍ କରନ୍ତୁ ଯେଉଁଠାରେ ଆପଣ ଭାବୁଛନ୍ତି ଏହି ପାଣିପାଗ ପ୍ରକାର ଦେଖାଯାଏ |</li>
+                        <li>ଜଳବାୟୁ କାରକଗୁଡିକ ବିଷୟରେ ଶିଖିବାକୁ ଜଳବାୟୁ କାରକ ବଟନ୍ ବ୍ୟବହାର କରନ୍ତୁ |</li>
+                        <li>ଅଞ୍ଚଳ ଚିହ୍ନଟ କରିବାରେ ସାହାଯ୍ୟ ପାଇଁ "ସୂଚନା" କ୍ଲିକ୍ କରନ୍ତୁ |</li>
+                        <li>ସଠିକ୍ ଉତ୍ତରଗୁଡିକ ପାଇଁ ପଏଣ୍ଟ ଅର୍ଜନ କରନ୍ତୁ ଏବଂ ଉଚ୍ଚ ସ୍ତରକୁ ଉନ୍ନତ କରନ୍ତୁ |</li>
+                        <li>ନୂତନ ପାଣିପାଗ ପ୍ରକାର ପାଇବାକୁ "ପରବର୍ତ୍ତୀ ପ୍ରକାର" କ୍ଲିକ୍ କରନ୍ତୁ |</li>
+                    `;
+                    
+                    hintBtnEl.textContent = "ସୂଚନା";
+                    nextPatternBtnEl.textContent = "ପରବର୍ତ୍ତୀ ପ୍ରକାର";
+                    
+                    document.getElementById('btnLatitude').textContent = "ଅକ୍ଷାଂଶ";
+                    document.getElementById('btnOceanCurrents').textContent = "ମହାସାଗର ସ୍ରୋତ";
+                    document.getElementById('btnTopography').textContent = "ସ୍ଥଳାକୃତି";
+                    document.getElementById('btnAirMasses').textContent = "ବାୟୁ ପ୍ରମାଣ";
+                    document.getElementById('btnElevation').textContent = "ଉଚ୍ଚତା";
+                    document.getElementById('btnVegetation').textContent = "ଉଦ୍ଭିଦ";
+                    
+                } else {
+                    headerTitleEl.textContent = "Climate Science: Weather Patterns";
+                    headerSubtitleEl.textContent = "Match weather patterns to geographical regions and learn about climate factors";
+                    mapTitleEl.textContent = "World Weather Map";
+                    scoreTextEl.textContent = "Score:";
+                    levelTextEl.textContent = "Level:";
+                    timeTextEl.textContent = "Time:";
+                    weatherTitleEl.textContent = "Weather Pattern";
+                    tempTextEl.textContent = "Temperature";
+                    rainTextEl.textContent = "Rainfall";
+                    windTextEl.textContent = "Wind";
+                    seasonTextEl.textContent = "Season";
+                    factorsTitleEl.textContent = "Climate Factors";
+                    instructionsTitleEl.textContent = "How To Play";
+                    
+                    instructionsListEl.innerHTML = `
+                        <li>Study the weather pattern description in the Weather Card</li>
+                        <li>Click on the world map region where you think this weather pattern is found</li>
+                        <li>Use the Climate Factors buttons to learn about what affects weather patterns</li>
+                        <li>Click "Hint" if you need help identifying the region</li>
+                        <li>Earn points for correct answers and advance to higher levels</li>
+                        <li>Click "Next Pattern" to get a new weather pattern to identify</li>
+                    `;
+                    
+                    hintBtnEl.textContent = "Hint";
+                    nextPatternBtnEl.textContent = "Next Pattern";
+                    
+                    document.getElementById('btnLatitude').textContent = "Latitude";
+                    document.getElementById('btnOceanCurrents').textContent = "Ocean Currents";
+                    document.getElementById('btnTopography').textContent = "Topography";
+                    document.getElementById('btnAirMasses').textContent = "Air Masses";
+                    document.getElementById('btnElevation').textContent = "Elevation";
+                    document.getElementById('btnVegetation').textContent = "Vegetation";
+                }
+                
+                // Update active button state
+                document.querySelectorAll('.lang-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.getElementById(lang + 'Btn').classList.add('active');
+                
+                // Reload game content with new language
+                loadWeatherPattern(currentPatternIndex);
+                createRegions();
+                updateStatusMessage();
+            }
+            
             // Add event listeners for climate factor buttons
             document.getElementById('btnLatitude').addEventListener('click', function() {
-                statusMessageEl.textContent = "Latitude affects temperature. Areas near the equator receive more direct sunlight and are warmer.";
+                if (currentLanguage === 'hindi') {
+                    statusMessageEl.textContent = "अक्षांश तापमान को प्रभावित करता है। भूमध्य रेखा के निकट के क्षेत्र अधिक सीधी धूप प्राप्त करते हैं और गर्म होते हैं।";
+                } else if (currentLanguage === 'odia') {
+                    statusMessageEl.textContent = "ଅକ୍ଷାଂଶ ତାପମାତ୍ରାକୁ ପ୍ରଭାବିତ କରେ | ବିଷୁବରେଖା ନିକଟସ୍ଥ ଅଞ୍ଚଳଗୁଡିକ ଅଧିକ ସିଧା ସୂର୍ଯ୍ୟାଲୋକ ଗ୍ରହଣ କରନ୍ତି ଏବଂ ଗରମ ହୋଇଯାଆନ୍ତି |";
+                } else {
+                    statusMessageEl.textContent = "Latitude affects temperature. Areas near the equator receive more direct sunlight and are warmer.";
+                }
+                
                 statusMessageEl.className = 'status warning';
             });
             
             document.getElementById('btnOceanCurrents').addEventListener('click', function() {
-                statusMessageEl.textContent = "Ocean currents redistribute heat. Warm currents warm nearby coasts, cold currents cool them.";
+                if (currentLanguage === 'hindi') {
+                    statusMessageEl.textContent = "समुद्री धाराएं गर्मी का पुनर्वितरण करती हैं। गर्म धाराएं पास के तटों को गर्म करती हैं, ठंडी धाराएं उन्हें ठंडा करती हैं।";
+                } else if (currentLanguage === 'odia') {
+                    statusMessageEl.textContent = "ମହାସାଗର ସ୍ରୋତଗୁଡିକ ତାପକୁ ପୁନର୍ବିତରଣ କରେ | ଗରମ ସ୍ରୋତ ନିକଟସ୍ଥ ଉପକୂଳଗୁଡିକୁ ଗରମ କରେ, ଥଣ୍ଡା ସ୍ରୋତଗୁଡିକ ସେଗୁଡିକୁ ଥଣ୍ଡା କରେ |";
+                } else {
+                    statusMessageEl.textContent = "Ocean currents redistribute heat. Warm currents warm nearby coasts, cold currents cool them.";
+                }
+                
                 statusMessageEl.className = 'status warning';
             });
             
             document.getElementById('btnTopography').addEventListener('click', function() {
-                statusMessageEl.textContent = "Topography affects weather. Mountains can block or redirect air flow and create rain shadows.";
+                if (currentLanguage === 'hindi') {
+                    statusMessageEl.textContent = "स्थलाकृति मौसम को प्रभावित करती है। पहाड़ हवा के प्रवाह को अवरुद्ध या पुनर्निर्देशित कर सकते हैं और वर्षा छाया बना सकते हैं।";
+                } else if (currentLanguage === 'odia') {
+                    statusMessageEl.textContent = "ସ୍ଥଳାକୃତି ପାଣିପାଗକୁ ପ୍ରଭାବିତ କରେ | ପର୍ବତଗୁଡିକ ବାୟୁ ପ୍ରବାହକୁ ଅବରୋଧ କରିପାରେ କିମ୍ବା ପୁନର୍ନିର୍ଦ୍ଦେଶିତ କରିପାରେ ଏବଂ ବର୍ଷା ଛାୟା ସୃଷ୍ଟି କରିପାରେ |";
+                } else {
+                    statusMessageEl.textContent = "Topography affects weather. Mountains can block or redirect air flow and create rain shadows.";
+                }
+                
                 statusMessageEl.className = 'status warning';
             });
             
             document.getElementById('btnAirMasses').addEventListener('click', function() {
-                statusMessageEl.textContent = "Air masses bring characteristic weather. Continental air is dry, maritime air is moist.";
+                if (currentLanguage === 'hindi') {
+                    statusMessageEl.textContent = "वायु राशि विशेषता मौसम लाती है। महाद्वीपीय हवा शुष्क होती है, समुद्री हवा नम होती है।";
+                } else if (currentLanguage === 'odia') {
+                    statusMessageEl.textContent = "ବାୟୁ ପ୍ରମାଣଗୁଡିକ ବିଶେଷତା ପାଣିପାଗ ଆଣିଥାଏ | ମହାଦ୍ଵୀପୀୟ ବାୟୁ ଶୁଷ୍କ, ସାମୁଦ୍ରିକ ବାୟୁ ଆର୍ଦ୍ର ଅଟେ |";
+                } else {
+                    statusMessageEl.textContent = "Air masses bring characteristic weather. Continental air is dry, maritime air is moist.";
+                }
+                
                 statusMessageEl.className = 'status warning';
             });
             
             document.getElementById('btnElevation').addEventListener('click', function() {
-                statusMessageEl.textContent = "Elevation affects temperature. Temperature decreases by about 6.5°C for every 1000m increase in elevation.";
+                if (currentLanguage === 'hindi') {
+                    statusMessageEl.textContent = "ऊंचाई तापमान को प्रभावित करती है। ऊंचाई में हर 1000 मीटर की वृद्धि के लिए तापमान लगभग 6.5°C कम हो जाता है।";
+                } else if (currentLanguage === 'odia') {
+                    statusMessageEl.textContent = "ଉଚ୍ଚତା ତାପମାତ୍ରାକୁ ପ୍ରଭାବିତ କରେ | ପ୍ରତି 1000 ମିଟର ଉଚ୍ଚତା ବୃଦ୍ଧି ପାଇଁ ତାପମାତ୍ରା ପ୍ରାୟ 6.5°C ହ୍ରାସ ପାଏ |";
+                } else {
+                    statusMessageEl.textContent = "Elevation affects temperature. Temperature decreases by about 6.5°C for every 1000m increase in elevation.";
+                }
+                
                 statusMessageEl.className = 'status warning';
             });
             
             document.getElementById('btnVegetation').addEventListener('click', function() {
-                statusMessageEl.textContent = "Vegetation affects local climate. Forests can increase humidity and moderate temperatures.";
+                if (currentLanguage === 'hindi') {
+                    statusMessageEl.textContent = "वनस्पति स्थानीय जलवायु को प्रभावित करती है। जंगल आर्द्रता बढ़ा सकते हैं और तापमान को संतुलित कर सकते हैं।";
+                } else if (currentLanguage === 'odia') {
+                    statusMessageEl.textContent = "ଉଦ୍ଭିଦ ସ୍ଥାନୀୟ ଜଳବାୟୁକୁ ପ୍ରଭାବିତ କରେ | ଜଙ୍ଗଲଗୁଡିକ ଆର୍ଦ୍ରତା ବୃଦ୍ଧି କରିପାରେ ଏବଂ ତାପମାତ୍ରାକୁ ମଧ୍ୟମ କରିପାରେ |";
+                } else {
+                    statusMessageEl.textContent = "Vegetation affects local climate. Forests can increase humidity and moderate temperatures.";
+                }
+                
                 statusMessageEl.className = 'status warning';
             });
             
             document.getElementById('hintBtn').addEventListener('click', provideHint);
             document.getElementById('nextPattern').addEventListener('click', nextPattern);
+            
+            document.getElementById('hindiBtn').addEventListener('click', function() {
+                changeLanguage('hindi');
+            });
+            
+            document.getElementById('odiaBtn').addEventListener('click', function() {
+                changeLanguage('odia');
+            });
+            
+            document.getElementById('englishBtn').addEventListener('click', function() {
+                changeLanguage('english');
+            });
             
             // Initialize the game
             initGame();
