@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complete Interactive Periodic Table</title>
+    <title>Atom Science: Element Forge</title>
     <style>
         * {
             box-sizing: border-box;
@@ -11,356 +11,220 @@
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
+        
         body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-            color: #333;
+            background: linear-gradient(135deg, #1a2a6c, #2a4b8c);
+            color: #fff;
             min-height: 100vh;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-
+        
         .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
+            max-width: 1000px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
-
+        
         header {
-            background: linear-gradient(to right, #2c3e50, #4ca1af);
-            color: white;
-            padding: 20px;
             text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            margin-bottom: 10px;
         }
-
+        
         h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
+            color: #4fc3f7;
+            text-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
         }
-
-        .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-
-        .content {
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-        }
-
-        .navigation {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-            background: #f8f9fa;
-            border-radius: 50px;
-            padding: 5px;
-        }
-
-        .nav-btn {
-            padding: 12px 25px;
-            border: none;
-            background: none;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 50px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-btn.active {
-            background: #4ca1af;
-            color: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .nav-btn:hover:not(.active) {
-            background: #e9ecef;
-        }
-
-        .screen {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* Periodic Table Styles */
-        .periodic-table-container {
-            overflow-x: auto;
-            margin-bottom: 20px;
-        }
-
-        .periodic-table {
-            display: grid;
-            grid-template-columns: repeat(18, 1fr);
-            gap: 4px;
-            margin: 0 auto;
-            min-width: 1200px;
-        }
-
-        .element {
-            aspect-ratio: 1/1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 5px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            position: relative;
-        }
-
-        .element:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            z-index: 2;
-        }
-
-        .element .number {
-            font-size: 0.7rem;
-            align-self: flex-start;
-            position: absolute;
-            top: 3px;
-            left: 5px;
-        }
-
-        .element .symbol {
-            font-size: 1.4rem;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        .element .name {
-            font-size: 0.6rem;
-            text-align: center;
-            margin-top: 5px;
-        }
-
-        .element .mass {
-            font-size: 0.7rem;
-            margin-top: 5px;
-        }
-
-        /* Element Details Styles */
-        .element-details {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .element-details .symbol {
-            font-size: 4rem;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-
-        .element-details .name {
-            font-size: 2rem;
-            margin-bottom: 15px;
-            color: #2c3e50;
-        }
-
-        .element-details .info {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .element-details .info div {
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 5px;
-        }
-
-        .element-details .description {
-            margin-top: 20px;
-            line-height: 1.6;
-            text-align: left;
-        }
-
-        /* Quiz Styles */
-        .quiz-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .question {
-            font-size: 1.4rem;
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: 600;
-        }
-
-        .options {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .option {
-            padding: 15px;
-            background: #f8f9fa;
-            border: 2px solid #dee2e6;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-            font-size: 1.1rem;
-        }
-
-        .option:hover {
-            background: #e9ecef;
-            border-color: #4ca1af;
-        }
-
-        .option.selected {
-            background: #4ca1af;
-            color: white;
-            border-color: #2c3e50;
-        }
-
-        .feedback {
-            text-align: center;
-            font-size: 1.2rem;
-            margin: 20px 0;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        .feedback.correct {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .feedback.incorrect {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .next-btn {
-            display: block;
-            margin: 20px auto;
-            padding: 12px 30px;
-            background: #4ca1af;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .next-btn:hover {
-            background: #2c3e50;
-        }
-
-        .score {
-            text-align: center;
-            font-size: 1.3rem;
-            margin-top: 20px;
-            font-weight: 600;
-        }
-
-        /* Legend Styles */
-        .legend {
+        
+        .game-area {
             display: flex;
             flex-wrap: wrap;
+            gap: 20px;
             justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
-            padding: 15px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
         }
-
-        .legend-item {
+        
+        .game-board {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 20px;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            margin: 5px;
         }
-
-        .legend-color {
+        
+        .controls {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 20px;
+        }
+        
+        .atom-visualization {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            margin: 20px auto;
+        }
+        
+        .nucleus {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #ff5252, #b71c1c);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(255, 82, 82, 0.7);
+            z-index: 10;
+        }
+        
+        .electron-shell {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid rgba(79, 195, 247, 0.5);
+            border-radius: 50%;
+        }
+        
+        .electron {
+            position: absolute;
             width: 20px;
             height: 20px;
-            border-radius: 3px;
-            margin-right: 8px;
+            background: radial-gradient(circle, #4fc3f7, #01579b);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px rgba(79, 195, 247, 0.7);
         }
-
-        .legend-label {
-            font-size: 0.9rem;
-        }
-
-        /* Lanthanide and Actinide Series */
-        .series {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .series-table {
+        
+        .control-panel {
             display: grid;
-            grid-template-columns: repeat(15, 1fr);
-            gap: 4px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
         }
-
-        .series-title {
+        
+        .control-btn {
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #2196f3;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .control-btn:hover {
+            background: #64b5f6;
+            transform: translateY(-2px);
+        }
+        
+        .control-btn:active {
+            transform: translateY(0);
+        }
+        
+        .proton { background: linear-gradient(to bottom, #ff5252, #b71c1c); }
+        .neutron { background: linear-gradient(to bottom, #bdbdbd, #616161); }
+        .electron-btn { background: linear-gradient(to bottom, #4fc3f7, #01579b); }
+        
+        .element-card {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
             text-align: center;
+        }
+        
+        .element-name {
+            font-size: 1.8rem;
+            color: #4fc3f7;
             margin-bottom: 10px;
-            font-weight: 600;
-            color: #2c3e50;
         }
-
-        /* Responsive Design */
+        
+        .element-details {
+            display: flex;
+            justify-content: space-around;
+        }
+        
+        .detail {
+            text-align: center;
+        }
+        
+        .detail-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .success {
+            background: rgba(76, 175, 80, 0.3);
+            color: #a5d6a7;
+        }
+        
+        .instructions {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        h2 {
+            color: #4fc3f7;
+            margin-bottom: 15px;
+        }
+        
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        li:before {
+            content: "•";
+            color: #4fc3f7;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        
         @media (max-width: 768px) {
-            .periodic-table {
-                grid-template-columns: repeat(9, 1fr);
-            }
-            
-            .options {
-                grid-template-columns: 1fr;
-            }
-            
-            .element-details .info {
-                grid-template-columns: 1fr;
-            }
-            
-            .series {
+            .game-area {
                 flex-direction: column;
-                align-items: center;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .periodic-table {
-                grid-template-columns: repeat(5, 1fr);
-            }
-            
-            .nav-btn {
-                padding: 10px 15px;
-                font-size: 0.9rem;
             }
         }
     </style>
@@ -368,527 +232,272 @@
 <body>
     <div class="container">
         <header>
-            <h1>Complete Interactive Periodic Table</h1>
-            <p class="subtitle">Explore all 118 elements with detailed information</p>
+            <h1>Atom Science: Element Forge</h1>
+            <p>Build atoms by adding the correct number of protons, neutrons, and electrons</p>
         </header>
         
-        <div class="content">
-            <div class="navigation">
-                <button class="nav-btn active" data-target="table">Periodic Table</button>
-                <button class="nav-btn" data-target="quiz">Element Quiz</button>
-            </div>
-            
-            <div id="table" class="screen active">
-                <div class="periodic-table-container">
-                    <div class="periodic-table" id="periodic-table">
-                        <!-- Elements will be generated by JavaScript -->
+        <div class="game-area">
+            <div class="game-board">
+                <h2>Atom Structure</h2>
+                <div class="atom-visualization" id="atomVis">
+                    <div class="nucleus" id="nucleus">
+                        <div id="protonCount">P: 0</div>
+                        <div id="neutronCount" style="margin-top: 20px;">N: 0</div>
                     </div>
-                </div>
-                
-                <div class="series">
-                    <div class="lanthanide-series">
-                        <div class="series-title">Lanthanides</div>
-                        <div class="series-table" id="lanthanide-table">
-                            <!-- Lanthanides will be generated by JavaScript -->
-                        </div>
-                    </div>
-                    <div class="actinide-series">
-                        <div class="series-title">Actinides</div>
-                        <div class="series-table" id="actinide-table">
-                            <!-- Actinides will be generated by JavaScript -->
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="legend">
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #ff9999;"></div>
-                        <span class="legend-label">Alkali Metals</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #ffcc99;"></div>
-                        <span class="legend-label">Alkaline Earth Metals</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #ffff99;"></div>
-                        <span class="legend-label">Transition Metals</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #99ff99;"></div>
-                        <span class="legend-label">Other Metals</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #99ffff;"></div>
-                        <span class="legend-label">Nonmetals</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #cc99ff;"></div>
-                        <span class="legend-label">Halogens</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #ff99ff;"></div>
-                        <span class="legend-label">Noble Gases</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #ffccff;"></div>
-                        <span class="legend-label">Lanthanides</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #ff99cc;"></div>
-                        <span class="legend-label">Actinides</span>
-                    </div>
-                </div>
-                
-                <div class="element-details" id="element-details">
-                    <div class="symbol">H</div>
-                    <div class="name">Hydrogen</div>
-                    <div class="info">
-                        <div>Atomic Number: 1</div>
-                        <div>Atomic Mass: 1.008</div>
-                        <div>Group: 1</div>
-                        <div>Period: 1</div>
-                    </div>
-                    <div class="description">
-                        Hydrogen is the most abundant chemical substance in the universe, constituting roughly 75% of all normal matter. Stars are composed mostly of hydrogen in the plasma state.
-                    </div>
+                    <!-- Electron shells will be generated by JavaScript -->
                 </div>
             </div>
             
-            <div id="quiz" class="screen">
-                <div class="quiz-container">
-                    <div class="question" id="question">Which element has the chemical symbol 'O'?</div>
-                    <div class="options" id="options">
-                        <div class="option" data-index="0">Osmium</div>
-                        <div class="option" data-index="1">Oxygen</div>
-                        <div class="option" data-index="2">Oganesson</div>
-                        <div class="option" data-index="3">Oxonium</div>
+            <div class="controls">
+                <h2>Element To Build</h2>
+                <div class="element-card">
+                    <div class="element-name" id="elementName">Hydrogen</div>
+                    <div class="element-details">
+                        <div class="detail">
+                            <div>Protons</div>
+                            <div class="detail-value" id="targetProtons">1</div>
+                        </div>
+                        <div class="detail">
+                            <div>Neutrons</div>
+                            <div class="detail-value" id="targetNeutrons">0</div>
+                        </div>
+                        <div class="detail">
+                            <div>Electrons</div>
+                            <div class="detail-value" id="targetElectrons">1</div>
+                        </div>
                     </div>
-                    <div class="feedback" id="feedback"></div>
-                    <button class="next-btn" id="next-btn">Next Question</button>
-                    <div class="score" id="score">Score: 0/0</div>
                 </div>
+                
+                <h2>Particle Controls</h2>
+                <div class="control-panel">
+                    <button class="control-btn proton" id="addProton">Add Proton</button>
+                    <button class="control-btn proton" id="removeProton">Remove Proton</button>
+                    <div class="control-btn">Protons: <span id="currentProtons">0</span></div>
+                    
+                    <button class="control-btn neutron" id="addNeutron">Add Neutron</button>
+                    <button class="control-btn neutron" id="removeNeutron">Remove Neutron</button>
+                    <div class="control-btn">Neutrons: <span id="currentNeutrons">0</span></div>
+                    
+                    <button class="control-btn electron-btn" id="addElectron">Add Electron</button>
+                    <button class="control-btn electron-btn" id="removeElectron">Remove Electron</button>
+                    <div class="control-btn">Electrons: <span id="currentElectrons">0</span></div>
+                </div>
+                
+                <button class="control-btn" id="checkAtom" style="width: 100%; background: #9c27b0;">Check Atom</button>
+                <button class="control-btn" id="nextElement" style="width: 100%; background: #ff9800;">Next Element</button>
+                
+                <div class="status" id="statusMessage">Build a Hydrogen atom with 1 proton and 1 electron</div>
             </div>
+        </div>
+        
+        <div class="instructions">
+            <h2>How To Play</h2>
+            <ul>
+                <li>Your goal is to build the atom shown in the Element Card</li>
+                <li>Add protons and neutrons to the nucleus</li>
+                <li>Add electrons to the electron shells (inner shell first)</li>
+                <li>Click "Check Atom" to verify if you've built the correct atom</li>
+                <li>Protons determine the element identity</li>
+                <li>Neutrons determine the isotope</li>
+                <li>Electrons must equal protons for a neutral atom</li>
+            </ul>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Element data for all 118 elements
+            // Game state
             const elements = [
-                // Period 1
-                {symbol: "H", name: "Hydrogen", number: 1, mass: 1.008, group: 1, period: 1, category: "nonmetal", description: "Hydrogen is the most abundant chemical substance in the universe, constituting roughly 75% of all normal matter. Stars are composed mostly of hydrogen in the plasma state."},
-                {symbol: "He", name: "Helium", number: 2, mass: 4.0026, group: 18, period: 1, category: "noble-gas", description: "Helium is the second lightest and second most abundant element in the observable universe. It is colorless, odorless, tasteless, non-toxic, and inert."},
-                
-                // Period 2
-                {symbol: "Li", name: "Lithium", number: 3, mass: 6.94, group: 1, period: 2, category: "alkali-metal", description: "Lithium is a soft, silvery-white metal that is the lightest metal and the lightest solid element. Under standard conditions, it is the least dense metal."},
-                {symbol: "Be", name: "Beryllium", number: 4, mass: 9.0122, group: 2, period: 2, category: "alkaline-earth", description: "Beryllium is a steel-gray, strong, lightweight and brittle alkaline earth metal. It is a divalent element that occurs naturally only in combination with other elements."},
-                {symbol: "B", name: "Boron", number: 5, mass: 10.81, group: 13, period: 2, category: "metalloid", description: "Boron is a metalloid chemical element that is black and lustrous. It is hard enough to scratch some abrasives, but too brittle for use in tools."},
-                {symbol: "C", name: "Carbon", number: 6, mass: 12.011, group: 14, period: 2, category: "nonmetal", description: "Carbon is the fourth most abundant element in the universe by mass. It is the key ingredient for all known life on Earth."},
-                {symbol: "N", name: "Nitrogen", number: 7, mass: 14.007, group: 15, period: 2, category: "nonmetal", description: "Nitrogen is the lightest member of group 15 of the periodic table. At standard temperature and pressure, two atoms of the element bind to form dinitrogen."},
-                {symbol: "O", name: "Oxygen", number: 8, mass: 15.999, group: 16, period: 2, category: "nonmetal", description: "Oxygen is a member of the chalcogen group on the periodic table. It is a highly reactive nonmetal and oxidizing agent."},
-                {symbol: "F", name: "Fluorine", number: 9, mass: 18.998, group: 17, period: 2, category: "halogen", description: "Fluorine is the most electronegative element. It is extremely reactive, as it reacts with all other elements except for the light inert gases."},
-                {symbol: "Ne", name: "Neon", number: 10, mass: 20.180, group: 18, period: 2, category: "noble-gas", description: "Neon is a noble gas that is colorless, odorless, inert under standard conditions. It gives a distinct reddish-orange glow when used in discharge tubes."},
-                
-                // Period 3
-                {symbol: "Na", name: "Sodium", number: 11, mass: 22.990, group: 1, period: 3, category: "alkali-metal", description: "Sodium is a soft, silvery-white, highly reactive metal. It is an essential element for all animals and some plants."},
-                {symbol: "Mg", name: "Magnesium", number: 12, mass: 24.305, group: 2, period: 3, category: "alkaline-earth", description: "Magnesium is a shiny gray solid. It is the ninth most abundant element in the universe and the eighth most abundant element in the Earth's crust."},
-                {symbol: "Al", name: "Aluminum", number: 13, mass: 26.982, group: 13, period: 3, category: "post-transition", description: "Aluminum is a silvery-white, soft, nonmagnetic and ductile metal. It is the third most abundant element in the Earth's crust after oxygen and silicon."},
-                {symbol: "Si", name: "Silicon", number: 14, mass: 28.085, group: 14, period: 3, category: "metalloid", description: "Silicon is a hard and brittle crystalline solid with a blue-gray metallic luster. It is the second most abundant element in the Earth's crust after oxygen."},
-                {symbol: "P", name: "Phosphorus", number: 15, mass: 30.974, group: 15, period: 3, category: "nonmetal", description: "Phosphorus is a highly reactive element that exists in several allotropic forms. It is essential for life as it is a key component of DNA, RNA, and ATP."},
-                {symbol: "S", name: "Sulfur", number: 16, mass: 32.06, group: 16, period: 3, category: "nonmetal", description: "Sulfur is a bright yellow crystalline solid at room temperature. It is an essential element for all life and is used in fertilizers and gunpowder."},
-                {symbol: "Cl", name: "Chlorine", number: 17, mass: 35.45, group: 17, period: 3, category: "halogen", description: "Chlorine is a yellow-green gas at room temperature. It is an extremely reactive element and a strong oxidizing agent."},
-                {symbol: "Ar", name: "Argon", number: 18, mass: 39.948, group: 18, period: 3, category: "noble-gas", description: "Argon is a noble gas that is colorless, odorless, and non-reactive. It is the third-most abundant gas in the Earth's atmosphere."},
-                
-                // Period 4
-                {symbol: "K", name: "Potassium", number: 19, mass: 39.098, group: 1, period: 4, category: "alkali-metal", description: "Potassium is a soft, silvery-white metal that tarnishes rapidly in air. It is essential for nerve function and is found in many foods."},
-                {symbol: "Ca", name: "Calcium", number: 20, mass: 40.078, group: 2, period: 4, category: "alkaline-earth", description: "Calcium is an alkaline earth metal. It is essential for living organisms, particularly in cell physiology and building skeletal systems."},
-                {symbol: "Sc", name: "Scandium", number: 21, mass: 44.956, group: 3, period: 4, category: "transition-metal", description: "Scandium is a silvery-white metallic transition metal. It is found in rare minerals from Scandinavia and is sometimes classified as a rare-earth element."},
-                {symbol: "Ti", name: "Titanium", number: 22, mass: 47.867, group: 4, period: 4, category: "transition-metal", description: "Titanium is a strong, lustrous, corrosion-resistant transition metal with a silver color. It is used in strong, lightweight alloys for aerospace and medical applications."},
-                {symbol: "V", name: "Vanadium", number: 23, mass: 50.942, group: 5, period: 4, category: "transition-metal", description: "Vanadium is a hard, silvery-gray, ductile transition metal. It is primarily used as an additive to strengthen steel."},
-                {symbol: "Cr", name: "Chromium", number: 24, mass: 51.996, group: 6, period: 4, category: "transition-metal", description: "Chromium is a steely-gray, lustrous, hard and brittle transition metal. It is the main additive in stainless steel, providing corrosion resistance."},
-                {symbol: "Mn", name: "Manganese", number: 25, mass: 54.938, group: 7, period: 4, category: "transition-metal", description: "Manganese is a gray-white metal, resembling iron. It is an essential trace element for all living organisms and is used in steel production."},
-                {symbol: "Fe", name: "Iron", number: 26, mass: 55.845, group: 8, period: 4, category: "transition-metal", description: "Iron is a metal that has been used since antiquity. It is the most common element on Earth by mass, forming much of Earth's outer and inner core."},
-                {symbol: "Co", name: "Cobalt", number: 27, mass: 58.933, group: 9, period: 4, category: "transition-metal", description: "Cobalt is a hard, lustrous, silver-gray metal. It is used in the production of magnetic, wear-resistant and high-strength alloys."},
-                {symbol: "Ni", name: "Nickel", number: 28, mass: 58.693, group: 10, period: 4, category: "transition-metal", description: "Nickel is a silvery-white lustrous metal with a slight golden tinge. It is used in many industrial and consumer products."},
-                {symbol: "Cu", name: "Copper", number: 29, mass: 63.546, group: 11, period: 4, category: "transition-metal", description: "Copper is a soft, malleable, and ductile metal with very high thermal and electrical conductivity. It has been used for thousands of years."},
-                {symbol: "Zn", name: "Zinc", number: 30, mass: 65.38, group: 12, period: 4, category: "transition-metal", description: "Zinc is a slightly brittle metal at room temperature. It is the 24th most abundant element in Earth's crust and has five stable isotopes."},
-                {symbol: "Ga", name: "Gallium", number: 31, mass: 69.723, group: 13, period: 4, category: "post-transition", description: "Gallium is a soft, silvery metal at standard temperature and pressure. It melts at 29.76°C (85.57°F), just above room temperature."},
-                {symbol: "Ge", name: "Germanium", number: 32, mass: 72.630, group: 14, period: 4, category: "metalloid", description: "Germanium is a lustrous, hard, grayish-white metalloid. It is an important semiconductor material used in transistors and other electronic devices."},
-                {symbol: "As", name: "Arsenic", number: 33, mass: 74.922, group: 15, period: 4, category: "metalloid", description: "Arsenic is a metalloid that occurs in many minerals. It has various allotropes, but only the gray form is important to industry."},
-                {symbol: "Se", name: "Selenium", number: 34, mass: 78.971, group: 16, period: 4, category: "nonmetal", description: "Selenium is a nonmetal with properties that are intermediate between the elements above and below in the periodic table."},
-                {symbol: "Br", name: "Bromine", number: 35, mass: 79.904, group: 17, period: 4, category: "halogen", description: "Bromine is a reddish-brown liquid at room temperature. It is the third-lightest halogen and is a fuming liquid with a pungent odor."},
-                {symbol: "Kr", name: "Krypton", number: 36, mass: 83.798, group: 18, period: 4, category: "noble-gas", description: "Krypton is a colorless, odorless, tasteless noble gas that occurs in trace amounts in the atmosphere. It is used in certain photographic flash lamps."},
-                
-                // Period 5
-                {symbol: "Rb", name: "Rubidium", number: 37, mass: 85.468, group: 1, period: 5, category: "alkali-metal", description: "Rubidium is a soft, silvery-white metallic element of the alkali metal group. It is similar to potassium and is highly reactive."},
-                {symbol: "Sr", name: "Strontium", number: 38, mass: 87.62, group: 2, period: 5, category: "alkaline-earth", description: "Strontium is a soft silver-white yellowish metallic element. It is a naturally occurring element found in rocks, soil, dust, coal, and oil."},
-                {symbol: "Y", name: "Yttrium", number: 39, mass: 88.906, group: 3, period: 5, category: "transition-metal", description: "Yttrium is a silvery-metallic transition metal. It is often found in rare-earth minerals and is used in various applications including LEDs and phosphors."},
-                {symbol: "Zr", name: "Zirconium", number: 40, mass: 91.224, group: 4, period: 5, category: "transition-metal", description: "Zirconium is a lustrous, gray-white, strong transition metal. It is highly resistant to corrosion and is used as an alloying agent in materials."},
-                {symbol: "Nb", name: "Niobium", number: 41, mass: 92.906, group: 5, period: 5, category: "transition-metal", description: "Niobium is a soft, gray, ductile transition metal. It is often found in the mineral pyrochlore and is used in various superalloys."},
-                {symbol: "Mo", name: "Molybdenum", number: 42, mass: 95.95, group: 6, period: 5, category: "transition-metal", description: "Molybdenum is a silvery metal with a gray cast. It has the sixth-highest melting point of any element and is used in high-strength steel alloys."},
-                {symbol: "Tc", name: "Technetium", number: 43, mass: 98, group: 7, period: 5, category: "transition-metal", description: "Technetium is a chemical element with the symbol Tc and atomic number 43. It is the lightest element whose isotopes are all radioactive."},
-                {symbol: "Ru", name: "Ruthenium", number: 44, mass: 101.07, group: 8, period: 5, category: "transition-metal", description: "Ruthenium is a rare transition metal belonging to the platinum group. It is found in platinum ores and is used as a catalyst in some platinum alloys."},
-                {symbol: "Rh", name: "Rhodium", number: 45, mass: 102.91, group: 9, period: 5, category: "transition-metal", description: "Rhodium is a rare, silvery-white, hard, corrosion-resistant transition metal. It is a member of the platinum group and is used in catalytic converters."},
-                {symbol: "Pd", name: "Palladium", number: 46, mass: 106.42, group: 10, period: 5, category: "transition-metal", description: "Palladium is a rare and lustrous silvery-white metal. It was discovered in 1803 and is used in catalytic converters, jewelry, and electronics."},
-                {symbol: "Ag", name: "Silver", number: 47, mass: 107.87, group: 11, period: 5, category: "transition-metal", description: "Silver is a soft, white, lustrous transition metal. It has the highest electrical conductivity of any element and the highest thermal conductivity of any metal."},
-                {symbol: "Cd", name: "Cadmium", number: 48, mass: 112.41, group: 12, period: 5, category: "transition-metal", description: "Cadmium is a soft, bluish-white metal. It is similar in many respects to zinc but forms complex compounds. It is used in batteries and pigments."},
-                {symbol: "In", name: "Indium", number: 49, mass: 114.82, group: 13, period: 5, category: "post-transition", description: "Indium is a post-transition metal that is very soft and malleable. It is used in the production of transparent conductive coatings for displays."},
-                {symbol: "Sn", name: "Tin", number: 50, mass: 118.71, group: 14, period: 5, category: "post-transition", description: "Tin is a silvery-white metal that is soft enough to be cut with little force. It is used in many alloys, most notably tin/lead soft solders."},
-                {symbol: "Sb", name: "Antimony", number: 51, mass: 121.76, group: 15, period: 5, category: "metalloid", description: "Antimony is a lustrous gray metalloid. It is found in nature mainly as the sulfide mineral stibnite and is used in flame retardants and alloys."},
-                {symbol: "Te", name: "Tellurium", number: 52, mass: 127.60, group: 16, period: 5, category: "metalloid", description: "Tellurium is a brittle, mildly toxic, rare, silver-white metalloid. It is chemically related to selenium and sulfur and is used in alloys."},
-                {symbol: "I", name: "Iodine", number: 53, mass: 126.90, group: 17, period: 5, category: "halogen", description: "Iodine is a lustrous, purple-black non-metallic solid. It sublimes easily to form a violet gas and is essential for thyroid function in animals."},
-                {symbol: "Xe", name: "Xenon", number: 54, mass: 131.29, group: 18, period: 5, category: "noble-gas", description: "Xenon is a colorless, dense, odorless noble gas found in Earth's atmosphere in trace amounts. It is used in flash lamps and arc lamps."},
-                
-                // Period 6
-                {symbol: "Cs", name: "Cesium", number: 55, mass: 132.91, group: 1, period: 6, category: "alkali-metal", description: "Cesium is a soft, silvery-gold alkali metal. It is the most electropositive and most alkaline element and is liquid near room temperature."},
-                {symbol: "Ba", name: "Barium", number: 56, mass: 137.33, group: 2, period: 6, category: "alkaline-earth", description: "Barium is a soft, silvery-white alkaline earth metal. It is never found in nature as a free element due to its high chemical reactivity."},
-                {symbol: "La", name: "Lanthanum", number: 57, mass: 138.91, group: 3, period: 6, category: "lanthanide", description: "Lanthanum is a soft, ductile, silvery-white metal. It is the eponym of the lanthanide series and is used in carbon arc lamps and camera lenses."},
-                {symbol: "Hf", name: "Hafnium", number: 72, mass: 178.49, group: 4, period: 6, category: "transition-metal", description: "Hafnium is a lustrous, silvery gray, tetravalent transition metal. It is used in nuclear control rods and high-temperature alloys."},
-                {symbol: "Ta", name: "Tantalum", number: 73, mass: 180.95, group: 5, period: 6, category: "transition-metal", description: "Tantalum is a rare, hard, blue-gray, lustrous transition metal. It is highly corrosion-resistant and is used in surgical implants and electronics."},
-                {symbol: "W", name: "Tungsten", number: 74, mass: 183.84, group: 6, period: 6, category: "transition-metal", description: "Tungsten is a rare metal found naturally on Earth. It has the highest melting point of all metals and is used in incandescent light bulb filaments."},
-                {symbol: "Re", name: "Rhenium", number: 75, mass: 186.21, group: 7, period: 6, category: "transition-metal", description: "Rhenium is a silvery-white, heavy, third-row transition metal. It has one of the highest melting points of all elements and is used in high-temperature superalloys."},
-                {symbol: "Os", name: "Osmium", number: 76, mass: 190.23, group: 8, period: 6, category: "transition-metal", description: "Osmium is a hard, brittle, bluish-white transition metal. It is the densest naturally occurring element and is used in alloys for fountain pen tips."},
-                {symbol: "Ir", name: "Iridium", number: 77, mass: 192.22, group: 9, period: 6, category: "transition-metal", description: "Iridium is a very hard, brittle, silvery-white transition metal. It is the most corrosion-resistant metal and is used in high-temperature applications."},
-                {symbol: "Pt", name: "Platinum", number: 78, mass: 195.08, group: 10, period: 6, category: "transition-metal", description: "Platinum is a dense, malleable, ductile, highly unreactive, precious, silverish-white transition metal. It is used in catalytic converters and jewelry."},
-                {symbol: "Au", name: "Gold", number: 79, mass: 196.97, group: 11, period: 6, category: "transition-metal", description: "Gold is a bright, slightly reddish yellow, dense, soft, malleable, and ductile metal. It has been a valuable and highly sought-after precious metal for coinage."},
-                {symbol: "Hg", name: "Mercury", number: 80, mass: 200.59, group: 12, period: 6, category: "transition-metal", description: "Mercury is a heavy, silvery d-block element. It is the only metallic element that is liquid at standard conditions for temperature and pressure."},
-                {symbol: "Tl", name: "Thallium", number: 81, mass: 204.38, group: 13, period: 6, category: "post-transition", description: "Thallium is a soft, malleable, gray post-transition metal. It is highly toxic and was used in rodenticides and insecticides before being banned."},
-                {symbol: "Pb", name: "Lead", number: 82, mass: 207.2, group: 14, period: 6, category: "post-transition", description: "Lead is a heavy metal that is denser than most common materials. It is soft and malleable, and has a relatively low melting point."},
-                {symbol: "Bi", name: "Bismuth", number: 83, mass: 208.98, group: 15, period: 6, category: "post-transition", description: "Bismuth is a brittle metal with a white, silver-pink hue. It has been known since ancient times and is the most naturally diamagnetic element."},
-                {symbol: "Po", name: "Polonium", number: 84, mass: 209, group: 16, period: 6, category: "post-transition", description: "Polonium is a rare and highly radioactive metal. It was discovered by Marie and Pierre Curie in 1898 and is named after Marie's native land of Poland."},
-                {symbol: "At", name: "Astatine", number: 85, mass: 210, group: 17, period: 6, category: "halogen", description: "Astatine is a radioactive element and the heaviest known halogen. It occurs on Earth only as the result of the decay of heavier elements."},
-                {symbol: "Rn", name: "Radon", number: 86, mass: 222, group: 18, period: 6, category: "noble-gas", description: "Radon is a radioactive, colorless, odorless, tasteless noble gas. It occurs naturally as an intermediate step in the normal radioactive decay chains."},
-                
-                // Period 7
-                {symbol: "Fr", name: "Francium", number: 87, mass: 223, group: 1, period: 7, category: "alkali-metal", description: "Francium is an intensely radioactive alkali metal. It is the second-most electropositive element and is extremely rare in nature."},
-                {symbol: "Ra", name: "Radium", number: 88, mass: 226, group: 2, period: 7, category: "alkaline-earth", description: "Radium is a radioactive alkaline earth metal. It was discovered by Marie and Pierre Curie in 1898 and is used in some medical applications."},
-                {symbol: "Ac", name: "Actinium", number: 89, mass: 227, group: 3, period: 7, category: "actinide", description: "Actinium is a soft, silvery-white radioactive metal. It glows in the dark with a pale blue light due to its intense radioactivity."},
-                {symbol: "Rf", name: "Rutherfordium", number: 104, mass: 267, group: 4, period: 7, category: "transition-metal", description: "Rutherfordium is a synthetic chemical element. It is highly radioactive and has no known uses outside of basic scientific research."},
-                {symbol: "Db", name: "Dubnium", number: 105, mass: 268, group: 5, period: 7, category: "transition-metal", description: "Dubnium is a synthetic chemical element. It is highly radioactive and has only been produced in tiny amounts for research purposes."},
-                {symbol: "Sg", name: "Seaborgium", number: 106, mass: 269, group: 6, period: 7, category: "transition-metal", description: "Seaborgium is a synthetic chemical element. It is named after the American nuclear chemist Glenn T. Seaborg and has no practical applications."},
-                {symbol: "Bh", name: "Bohrium", number: 107, mass: 270, group: 7, period: 7, category: "transition-metal", description: "Bohrium is a synthetic chemical element. It is highly radioactive and has only been produced in minute quantities for research purposes."},
-                {symbol: "Hs", name: "Hassium", number: 108, mass: 277, group: 8, period: 7, category: "transition-metal", description: "Hassium is a synthetic chemical element. It is highly radioactive and has only been produced in very small amounts for scientific research."},
-                {symbol: "Mt", name: "Meitnerium", number: 109, mass: 278, group: 9, period: 7, category: "transition-metal", description: "Meitnerium is a synthetic chemical element. It is highly radioactive and has only been produced in minute quantities for research purposes."},
-                {symbol: "Ds", name: "Darmstadtium", number: 110, mass: 281, group: 10, period: 7, category: "transition-metal", description: "Darmstadtium is a synthetic chemical element. It is extremely radioactive and has only been produced in minute amounts for research."},
-                {symbol: "Rg", name: "Roentgenium", number: 111, mass: 282, group: 11, period: 7, category: "transition-metal", description: "Roentgenium is a synthetic chemical element. It is highly radioactive and has only been produced in minute quantities for research purposes."},
-                {symbol: "Cn", name: "Copernicium", number: 112, mass: 285, group: 12, period: 7, category: "transition-metal", description: "Copernicium is a synthetic chemical element. It is extremely radioactive and has only been produced in minute amounts for research."},
-                {symbol: "Nh", name: "Nihonium", number: 113, mass: 286, group: 13, period: 7, category: "post-transition", description: "Nihonium is a synthetic chemical element. It is highly radioactive and has only been produced in minute quantities for research purposes."},
-                {symbol: "Fl", name: "Flerovium", number: 114, mass: 289, group: 14, period: 7, category: "post-transition", description: "Flerovium is a synthetic chemical element. It is extremely radioactive and has only been produced in minute amounts for research."},
-                {symbol: "Mc", name: "Moscovium", number: 115, mass: 290, group: 15, period: 7, category: "post-transition", description: "Moscovium is a synthetic chemical element. It is highly radioactive and has only been produced in minute quantities for research purposes."},
-                {symbol: "Lv", name: "Livermorium", number: 116, mass: 293, group: 16, period: 7, category: "post-transition", description: "Livermorium is a synthetic chemical element. It is extremely radioactive and has only been produced in minute amounts for research."},
-                {symbol: "Ts", name: "Tennessine", number: 117, mass: 294, group: 17, period: 7, category: "halogen", description: "Tennessine is a synthetic chemical element. It is highly radioactive and has only been produced in minute quantities for research purposes."},
-                {symbol: "Og", name: "Oganesson", number: 118, mass: 294, group: 18, period: 7, category: "noble-gas", description: "Oganesson is a synthetic chemical element. It is extremely radioactive and has only been produced in minute amounts for research."}
+                { name: "Hydrogen", protons: 1, neutrons: 0, electrons: 1 },
+                { name: "Helium", protons: 2, neutrons: 2, electrons: 2 },
+                { name: "Lithium", protons: 3, neutrons: 4, electrons: 3 },
+                { name: "Beryllium", protons: 4, neutrons: 5, electrons: 4 },
+                { name: "Boron", protons: 5, neutrons: 6, electrons: 5 },
+                { name: "Carbon", protons: 6, neutrons: 6, electrons: 6 },
+                { name: "Nitrogen", protons: 7, neutrons: 7, electrons: 7 },
+                { name: "Oxygen", protons: 8, neutrons: 8, electrons: 8 }
             ];
-
-            // Lanthanides
-            const lanthanides = [
-                {symbol: "Ce", name: "Cerium", number: 58, mass: 140.12, group: 3, period: 6, category: "lanthanide", description: "Cerium is a soft, ductile, silvery-white metal that tarnishes when exposed to air. It is the most abundant of the rare earth elements."},
-                {symbol: "Pr", name: "Praseodymium", number: 59, mass: 140.91, group: 3, period: 6, category: "lanthanide", description: "Praseodymium is a soft, silvery, malleable and ductile metal. It is used in magnets, lasers, and as a green colorant in glasses and enamels."},
-                {symbol: "Nd", name: "Neodymium", number: 60, mass: 144.24, group: 3, period: 6, category: "lanthanide", description: "Neodymium is a soft, silvery metal that tarnishes in air. It is used in powerful magnets, lasers, and as a purple colorant in glasses and ceramics."},
-                {symbol: "Pm", name: "Promethium", number: 61, mass: 145, group: 3, period: 6, category: "lanthanide", description: "Promethium is a radioactive element and the only lanthanide with no stable isotopes. It is used in nuclear batteries and as a source of X-rays."},
-                {symbol: "Sm", name: "Samarium", number: 62, mass: 150.36, group: 3, period: 6, category: "lanthanide", description: "Samarium is a hard, silvery metal that oxidizes in air. It is used in magnets, lasers, and as a neutron absorber in nuclear reactors."},
-                {symbol: "Eu", name: "Europium", number: 63, mass: 151.96, group: 3, period: 6, category: "lanthanide", description: "Europium is a moderately hard, silvery metal. It is the most reactive rare earth element and is used in phosphors for television and computer screens."},
-                {symbol: "Gd", name: "Gadolinium", number: 64, mass: 157.25, group: 3, period: 6, category: "lanthanide", description: "Gadolinium is a silvery-white, malleable and ductile rare earth metal. It is used in MRI contrast agents and in various electronic components."},
-                {symbol: "Tb", name: "Terbium", number: 65, mass: 158.93, group: 3, period: 6, category: "lanthanide", description: "Terbium is a silvery-white, rare earth metal. It is used in solid-state devices and as a stabilizer of fuel cells."},
-                {symbol: "Dy", name: "Dysprosium", number: 66, mass: 162.50, group: 3, period: 6, category: "lanthanide", description: "Dysprosium is a rare earth element with a metallic, bright silver luster. It is used in neodymium-based magnets and nuclear reactor control rods."},
-                {symbol: "Ho", name: "Holmium", number: 67, mass: 164.93, group: 3, period: 6, category: "lanthanide", description: "Holmium is a relatively soft and malleable silvery-white metal. It has the highest magnetic strength of any element and is used in magnetic fields."},
-                {symbol: "Er", name: "Erbium", number: 68, mass: 167.26, group: 3, period: 6, category: "lanthanide", description: "Erbium is a silvery-white solid metal. It is used in nuclear technology, as a photographic filter, and in fiber optic cables."},
-                {symbol: "Tm", name: "Thulium", number: 69, mass: 168.93, group: 3, period: 6, category: "lanthanide", description: "Thulium is the least abundant of the naturally occurring rare earth elements. It is used in portable X-ray devices and in some lasers."},
-                {symbol: "Yb", name: "Ytterbium", number: 70, mass: 173.05, group: 3, period: 6, category: "lanthanide", description: "Ytterbium is a soft, malleable and ductile chemical element. It is used in stainless steel and in some lasers and atomic clocks."},
-                {symbol: "Lu", name: "Lutetium", number: 71, mass: 174.97, group: 3, period: 6, category: "lanthanide", description: "Lutetium is a silvery white metal, which resists corrosion in dry air. It is used in petroleum cracking and in some cancer treatments."}
-            ];
-
-            // Actinides
-            const actinides = [
-                {symbol: "Th", name: "Thorium", number: 90, mass: 232.04, group: 3, period: 7, category: "actinide", description: "Thorium is a weakly radioactive metallic chemical element. It is used as an alloying agent in magnesium and in some types of nuclear reactors."},
-                {symbol: "Pa", name: "Protactinium", number: 91, mass: 231.04, group: 3, period: 7, category: "actinide", description: "Protactinium is a dense, silvery-gray metal. It is rare, radioactive, and highly toxic, with no commercial applications."},
-                {symbol: "U", name: "Uranium", number: 92, mass: 238.03, group: 3, period: 7, category: "actinide", description: "Uranium is a silvery-gray metal in the actinide series. It is weakly radioactive and occurs naturally in low concentrations in soil, rock and water."},
-                {symbol: "Np", name: "Neptunium", number: 93, mass: 237, group: 3, period: 7, category: "actinide", description: "Neptunium is a radioactive actinide metal. It is the first transuranic element and is used in neutron detection equipment."},
-                {symbol: "Pu", name: "Plutonium", number: 94, mass: 244, group: 3, period: 7, category: "actinide", description: "Plutonium is a radioactive actinide metal. It is used in nuclear weapons and as a fuel in some nuclear reactors."},
-                {symbol: "Am", name: "Americium", number: 95, mass: 243, group: 3, period: 7, category: "actinide", description: "Americium is a radioactive transuranic chemical element. It is used in smoke detectors and as a neutron source in industrial gauges."},
-                {symbol: "Cm", name: "Curium", number: 96, mass: 247, group: 3, period: 7, category: "actinide", description: "Curium is a hard, dense, silvery metal. It is highly radioactive and is used primarily for scientific research purposes."},
-                {symbol: "Bk", name: "Berkelium", number: 97, mass: 247, group: 3, period: 7, category: "actinide", description: "Berkelium is a radioactive metallic element. It is produced in minute amounts and has no commercial applications."},
-                {symbol: "Cf", name: "Californium", number: 98, mass: 251, group: 3, period: 7, category: "actinide", description: "Californium is a radioactive metallic chemical element. It is used as a neutron source in nuclear reactors and in neutron moisture gauges."},
-                {symbol: "Es", name: "Einsteinium", number: 99, mass: 252, group: 3, period: 7, category: "actinide", description: "Einsteinium is a synthetic element. It is highly radioactive and has only been produced in minute quantities for research purposes."},
-                {symbol: "Fm", name: "Fermium", number: 100, mass: 257, group: 3, period: 7, category: "actinide", description: "Fermium is a synthetic element. It is highly radioactive and has only been produced in minute quantities for research purposes."},
-                {symbol: "Md", name: "Mendelevium", number: 101, mass: 258, group: 3, period: 7, category: "actinide", description: "Mendelevium is a synthetic element. It is highly radioactive and has only been produced in minute quantities for research purposes."},
-                {symbol: "No", name: "Nobelium", number: 102, mass: 259, group: 3, period: 7, category: "actinide", description: "Nobelium is a synthetic chemical element. It is highly radioactive and has only been produced in minute quantities for research purposes."},
-                {symbol: "Lr", name: "Lawrencium", number: 103, mass: 266, group: 3, period: 7, category: "actinide", description: "Lawrencium is a synthetic chemical element. It is highly radioactive and has only been produced in minute quantities for research purposes."}
-            ];
-
-            // Quiz questions
-            const quizQuestions = [
-                {
-                    question: "Which element has the chemical symbol 'O'?",
-                    options: ["Osmium", "Oxygen", "Oganesson", "Oxonium"],
-                    answer: 1
-                },
-                {
-                    question: "What is the atomic number of Carbon?",
-                    options: ["6", "12", "14", "8"],
-                    answer: 0
-                },
-                {
-                    question: "Which of these is a noble gas?",
-                    options: ["Chlorine", "Helium", "Nitrogen", "Oxygen"],
-                    answer: 1
-                },
-                {
-                    question: "Which element is the most abundant in the Earth's atmosphere?",
-                    options: ["Oxygen", "Carbon", "Nitrogen", "Hydrogen"],
-                    answer: 2
-                },
-                {
-                    question: "What is the chemical symbol for Gold?",
-                    options: ["Go", "Gd", "Au", "Ag"],
-                    answer: 2
-                },
-                {
-                    question: "Which element has the highest melting point?",
-                    options: ["Tungsten", "Iron", "Titanium", "Carbon"],
-                    answer: 0
-                },
-                {
-                    question: "What is the lightest element?",
-                    options: ["Helium", "Hydrogen", "Lithium", "Oxygen"],
-                    answer: 1
-                },
-                {
-                    question: "Which element is liquid at room temperature?",
-                    options: ["Bromine", "Chlorine", "Iodine", "Fluorine"],
-                    answer: 0
-                }
-            ];
-
+            
+            let currentElementIndex = 0;
+            let currentProtons = 0;
+            let currentNeutrons = 0;
+            let currentElectrons = 0;
+            
             // DOM elements
-            const navButtons = document.querySelectorAll('.nav-btn');
-            const screens = document.querySelectorAll('.screen');
-            const periodicTable = document.getElementById('periodic-table');
-            const lanthanideTable = document.getElementById('lanthanide-table');
-            const actinideTable = document.getElementById('actinide-table');
-            const elementDetails = document.getElementById('element-details');
-            const questionElement = document.getElementById('question');
-            const optionsElement = document.getElementById('options');
-            const feedbackElement = document.getElementById('feedback');
-            const nextButton = document.getElementById('next-btn');
-            const scoreElement = document.getElementById('score');
-
-            // Navigation
-            navButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const target = button.getAttribute('data-target');
-                    
-                    // Update active button
-                    navButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    
-                    // Show target screen
-                    screens.forEach(screen => screen.classList.remove('active'));
-                    document.getElementById(target).classList.add('active');
-                    
-                    // If switching to quiz, reset it
-                    if (target === 'quiz') {
-                        resetQuiz();
-                    }
-                });
-            });
-
-            // Generate periodic table
-            function generatePeriodicTable() {
-                // Clear the table
-                periodicTable.innerHTML = '';
+            const elementNameEl = document.getElementById('elementName');
+            const targetProtonsEl = document.getElementById('targetProtons');
+            const targetNeutronsEl = document.getElementById('targetNeutrons');
+            const targetElectronsEl = document.getElementById('targetElectrons');
+            
+            const currentProtonsEl = document.getElementById('currentProtons');
+            const currentNeutronsEl = document.getElementById('currentNeutrons');
+            const currentElectronsEl = document.getElementById('currentElectrons');
+            
+            const protonCountEl = document.getElementById('protonCount');
+            const neutronCountEl = document.getElementById('neutronCount');
+            
+            const statusMessageEl = document.getElementById('statusMessage');
+            
+            const atomVisEl = document.getElementById('atomVis');
+            
+            // Initialize the game
+            function initGame() {
+                loadElement(currentElementIndex);
+                updateAtomVisualization();
+                updateStatusMessage();
+            }
+            
+            // Load element data
+            function loadElement(index) {
+                const element = elements[index];
+                elementNameEl.textContent = element.name;
+                targetProtonsEl.textContent = element.protons;
+                targetNeutronsEl.textContent = element.neutrons;
+                targetElectronsEl.textContent = element.electrons;
                 
-                // Create empty cells for the entire table
-                for (let i = 0; i < 18 * 7; i++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'empty-cell';
-                    periodicTable.appendChild(cell);
-                }
+                currentProtons = 0;
+                currentNeutrons = 0;
+                currentElectrons = 0;
                 
-                // Place elements in their correct positions
-                elements.forEach(element => {
-                    const position = (element.period - 1) * 18 + (element.group - 1);
-                    const cell = periodicTable.children[position];
+                updateParticleCounts();
+            }
+            
+            // Update particle count displays
+            function updateParticleCounts() {
+                currentProtonsEl.textContent = currentProtons;
+                currentNeutronsEl.textContent = currentNeutrons;
+                currentElectronsEl.textContent = currentElectrons;
+                
+                protonCountEl.textContent = `P: ${currentProtons}`;
+                neutronCountEl.textContent = `N: ${currentNeutrons}`;
+                
+                // Adjust nucleus size based on particle count
+                const totalNucleons = currentProtons + currentNeutrons;
+                const nucleusSize = 50 + (totalNucleons * 3);
+                document.getElementById('nucleus').style.width = `${nucleusSize}px`;
+                document.getElementById('nucleus').style.height = `${nucleusSize}px`;
+            }
+            
+            // Update the atom visualization
+            function updateAtomVisualization() {
+                // Clear existing electron shells
+                const existingShells = document.querySelectorAll('.electron-shell');
+                existingShells.forEach(shell => shell.remove());
+                
+                // Create electron shells based on current electrons
+                if (currentElectrons > 0) {
+                    const shellCount = Math.ceil(currentElectrons / 2);
                     
-                    if (cell) {
-                        cell.className = `element ${element.category}`;
-                        cell.innerHTML = `
-                            <div class="number">${element.number}</div>
-                            <div class="symbol">${element.symbol}</div>
-                            <div class="name">${element.name}</div>
-                            <div class="mass">${element.mass}</div>
-                        `;
+                    for (let i = 0; i < shellCount; i++) {
+                        const shell = document.createElement('div');
+                        shell.className = 'electron-shell';
                         
-                        // Add click event to show element details
-                        cell.addEventListener('click', () => showElementDetails(element));
+                        const shellRadius = 100 + (i * 40);
+                        shell.style.width = `${shellRadius * 2}px`;
+                        shell.style.height = `${shellRadius * 2}px`;
                         
-                        // Set color based on category
-                        setElementColor(cell, element.category);
+                        atomVisEl.appendChild(shell);
+                        
+                        // Add electrons to this shell
+                        const electronsInThisShell = Math.min(2, currentElectrons - (i * 2));
+                        for (let j = 0; j < electronsInThisShell; j++) {
+                            const electron = document.createElement('div');
+                            electron.className = 'electron';
+                            
+                            // Position electrons evenly around the shell
+                            const angle = (j * (2 * Math.PI / electronsInThisShell)) + (i * 0.5);
+                            const centerX = 150;
+                            const centerY = 150;
+                            const x = centerX + shellRadius * Math.cos(angle);
+                            const y = centerY + shellRadius * Math.sin(angle);
+                            
+                            electron.style.left = `${x}px`;
+                            electron.style.top = `${y}px`;
+                            
+                            atomVisEl.appendChild(electron);
+                        }
                     }
-                });
-
-                // Generate lanthanide series
-                lanthanides.forEach(element => {
-                    const cell = document.createElement('div');
-                    cell.className = `element ${element.category}`;
-                    cell.innerHTML = `
-                        <div class="number">${element.number}</div>
-                        <div class="symbol">${element.symbol}</div>
-                        <div class="name">${element.name}</div>
-                        <div class="mass">${element.mass}</div>
-                    `;
-                    
-                    // Add click event to show element details
-                    cell.addEventListener('click', () => showElementDetails(element));
-                    
-                    // Set color based on category
-                    setElementColor(cell, element.category);
-                    
-                    lanthanideTable.appendChild(cell);
-                });
-
-                // Generate actinide series
-                actinides.forEach(element => {
-                    const cell = document.createElement('div');
-                    cell.className = `element ${element.category}`;
-                    cell.innerHTML = `
-                        <div class="number">${element.number}</div>
-                        <div class="symbol">${element.symbol}</div>
-                        <div class="name">${element.name}</div>
-                        <div class="mass">${element.mass}</div>
-                    `;
-                    
-                    // Add click event to show element details
-                    cell.addEventListener('click', () => showElementDetails(element));
-                    
-                    // Set color based on category
-                    setElementColor(cell, element.category);
-                    
-                    actinideTable.appendChild(cell);
-                });
-            }
-
-            // Set element color based on category
-            function setElementColor(element, category) {
-                const colors = {
-                    'alkali-metal': '#ff9999',
-                    'alkaline-earth': '#ffcc99',
-                    'transition-metal': '#ffff99',
-                    'post-transition': '#99ff99',
-                    'metalloid': '#99cc99',
-                    'nonmetal': '#99ffff',
-                    'halogen': '#cc99ff',
-                    'noble-gas': '#ff99ff',
-                    'lanthanide': '#ffccff',
-                    'actinide': '#ff99cc'
-                };
-                
-                element.style.backgroundColor = colors[category] || '#cccccc';
-            }
-
-            // Show element details
-            function showElementDetails(element) {
-                elementDetails.innerHTML = `
-                    <div class="symbol">${element.symbol}</div>
-                    <div class="name">${element.name}</div>
-                    <div class="info">
-                        <div>Atomic Number: ${element.number}</div>
-                        <div>Atomic Mass: ${element.mass}</div>
-                        <div>Group: ${element.group}</div>
-                        <div>Period: ${element.period}</div>
-                    </div>
-                    <div class="description">${element.description}</div>
-                `;
-                
-                // Scroll to details
-                elementDetails.scrollIntoView({ behavior: 'smooth' });
-            }
-
-            // Quiz functionality
-            let currentQuestion = 0;
-            let score = 0;
-            let selectedOption = null;
-
-            function resetQuiz() {
-                currentQuestion = 0;
-                score = 0;
-                selectedOption = null;
-                feedbackElement.textContent = '';
-                feedbackElement.className = 'feedback';
-                showQuestion();
-                updateScore();
-            }
-
-            function showQuestion() {
-                const question = quizQuestions[currentQuestion];
-                questionElement.textContent = question.question;
-                
-                optionsElement.innerHTML = '';
-                question.options.forEach((option, index) => {
-                    const optionElement = document.createElement('div');
-                    optionElement.className = 'option';
-                    optionElement.textContent = option;
-                    optionElement.setAttribute('data-index', index);
-                    
-                    optionElement.addEventListener('click', () => selectOption(optionElement, index));
-                    optionsElement.appendChild(optionElement);
-                });
-                
-                nextButton.textContent = currentQuestion === quizQuestions.length - 1 ? 'Finish Quiz' : 'Next Question';
-                feedbackElement.textContent = '';
-                feedbackElement.className = 'feedback';
-            }
-
-            function selectOption(optionElement, index) {
-                // Remove previous selection
-                const options = document.querySelectorAll('.option');
-                options.forEach(opt => opt.classList.remove('selected'));
-                
-                // Set new selection
-                optionElement.classList.add('selected');
-                selectedOption = index;
-                
-                // Check answer
-                const correct = index === quizQuestions[currentQuestion].answer;
-                
-                // Show feedback
-                feedbackElement.textContent = correct ? 'Correct!' : 'Incorrect!';
-                feedbackElement.className = `feedback ${correct ? 'correct' : 'incorrect'}`;
-                
-                // Update score if correct
-                if (correct) {
-                    score++;
-                    updateScore();
                 }
             }
-
-            function updateScore() {
-                scoreElement.textContent = `Score: ${score}/${quizQuestions.length}`;
+            
+            // Update status message
+            function updateStatusMessage() {
+                const element = elements[currentElementIndex];
+                statusMessageEl.textContent = `Build a ${element.name} atom with ${element.protons} protons, ${element.neutrons} neutrons, and ${element.electrons} electrons`;
+                statusMessageEl.className = 'status';
             }
-
-            nextButton.addEventListener('click', () => {
-                if (selectedOption === null) return;
+            
+            // Check if the built atom matches the target
+            function checkAtom() {
+                const element = elements[currentElementIndex];
                 
-                currentQuestion++;
-                
-                if (currentQuestion < quizQuestions.length) {
-                    selectedOption = null;
-                    showQuestion();
+                if (currentProtons === element.protons && 
+                    currentNeutrons === element.neutrons && 
+                    currentElectrons === element.electrons) {
+                    statusMessageEl.textContent = 'Success! You built the correct atom!';
+                    statusMessageEl.className = 'status success';
                 } else {
-                    // End of quiz
-                    questionElement.textContent = 'Quiz Completed!';
-                    optionsElement.innerHTML = '';
-                    feedbackElement.textContent = `Your final score: ${score}/${quizQuestions.length}`;
-                    feedbackElement.className = 'feedback';
-                    nextButton.textContent = 'Restart Quiz';
-                    
-                    nextButton.addEventListener('click', resetQuiz, { once: true });
+                    statusMessageEl.textContent = 'Not quite right. Keep trying!';
+                    statusMessageEl.className = 'status';
+                }
+            }
+            
+            // Move to the next element
+            function nextElement() {
+                currentElementIndex = (currentElementIndex + 1) % elements.length;
+                loadElement(currentElementIndex);
+                updateAtomVisualization();
+                updateStatusMessage();
+            }
+            
+            // Event listeners for buttons
+            document.getElementById('addProton').addEventListener('click', function() {
+                currentProtons++;
+                updateParticleCounts();
+                updateAtomVisualization();
+            });
+            
+            document.getElementById('removeProton').addEventListener('click', function() {
+                if (currentProtons > 0) {
+                    currentProtons--;
+                    updateParticleCounts();
+                    updateAtomVisualization();
                 }
             });
-
-            // Initialize the app
-            generatePeriodicTable();
-            showElementDetails(elements[0]); // Show details for Hydrogen by default
+            
+            document.getElementById('addNeutron').addEventListener('click', function() {
+                currentNeutrons++;
+                updateParticleCounts();
+                updateAtomVisualization();
+            });
+            
+            document.getElementById('removeNeutron').addEventListener('click', function() {
+                if (currentNeutrons > 0) {
+                    currentNeutrons--;
+                    updateParticleCounts();
+                    updateAtomVisualization();
+                }
+            });
+            
+            document.getElementById('addElectron').addEventListener('click', function() {
+                currentElectrons++;
+                updateParticleCounts();
+                updateAtomVisualization();
+            });
+            
+            document.getElementById('removeElectron').addEventListener('click', function() {
+                if (currentElectrons > 0) {
+                    currentElectrons--;
+                    updateParticleCounts();
+                    updateAtomVisualization();
+                }
+            });
+            
+            document.getElementById('checkAtom').addEventListener('click', checkAtom);
+            document.getElementById('nextElement').addEventListener('click', nextElement);
+            
+            // Initialize the game
+            initGame();
         });
     </script>
 </body>
