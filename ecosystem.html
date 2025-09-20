@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecosystem Simulator: The Balance of Life</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        header {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            border-bottom: 5px solid #27ae60;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .intro {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 20px;
+        }
+        
+        .ecosystem-display {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .ecosystem-visual {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%232c3e50" /></svg>');
+            background-size: cover;
+            border-radius: 10px;
+            height: 300px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .species {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            transition: all 0.5s ease;
+        }
+        
+        .population-panel {
+            display: flex;
+            justify-content: space-around;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .species-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            flex: 1;
+            min-width: 200px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .species-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .species-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        
+        .population-slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .population-value {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 5px 0;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-size: 1rem;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        .reset-btn {
+            background: #e74c3c;
+        }
+        
+        .reset-btn:hover {
+            background: #c0392b;
+        }
+        
+        .simulate-btn {
+            background: #27ae60;
+        }
+        
+        .simulate-btn:hover {
+            background: #219653;
+        }
+        
+        .info-panel {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-top: 5px solid #27ae60;
+        }
+        
+        .ecosystem-health {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .health-bar {
+            width: 100%;
+            height: 30px;
+            background: #ecf0f1;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e74c3c, #f39c12, #27ae60);
+            border-radius: 15px;
+            transition: width 0.5s ease;
+        }
+        
+        .health-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .food-chain {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .food-chain-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px;
+            min-width: 120px;
+            text-align: center;
+        }
+        
+        .food-chain-item h4 {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 5px;
+            margin-bottom: 5px;
+        }
+        
+        h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            text-align: center;
+        }
+        
+        .round-counter {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .event-log {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 15px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .event {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #3498db;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .population-panel {
+                flex-direction: column;
+            }
+            
+            .species-card {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Ecosystem Simulator: The Balance of Life</h1>
+            <p class="intro">Manage species populations to maintain a balanced ecosystem. Watch how changes affect the food web and ecosystem health!</p>
+        </header>
+        
+        <div class="game-container">
+            <div class="round-counter">Round: <span id="round">1</span></div>
+            
+            <div class="ecosystem-display">
+                <div class="ecosystem-visual" id="ecosystem">
+                    <!-- Species will be added here dynamically -->
+                </div>
+                
+                <div class="ecosystem-health">
+                    <div class="health-text">Ecosystem Health: <span id="health-value">100</span>%</div>
+                    <div class="health-bar">
+                        <div class="health-fill" id="health-bar" style="width: 100%;"></div>
+                    </div>
+                </div>
+                
+                <div class="population-panel">
+                    <div class="species-card" data-species="plants">
+                        <div class="species-icon">🌿</div>
+                        <div class="species-name">Plants</div>
+                        <div class="population-value"><span id="plants-value">50</span></div>
+                        <input type="range" min="10" max="100" value="50" class="population-slider" id="plants-slider">
+                        <div class="species-info">Producers: Convert sunlight to energy</div>
+                    </div>
+                    
+                    <div class="species-card" data-species="herbivores">
+                        <div class="species-icon">🐇</div>
+                        <div class="species-name">Herbivores</div>
+                        <div class="population-value"><span id="herbivores-value">30</span></div>
+                        <input type="range" min="5" max="60" value="30" class="population-slider" id="herbivores-slider">
+                        <div class="species-info">Primary Consumers: Eat plants</div>
+                    </div>
+                    
+                    <div class="species-card" data-species="carnivores">
+                        <div class="species-icon">🦊</div>
+                        <div class="species-name">Carnivores</div>
+                        <div class="population-value"><span id="carnivores-value">20</span></div>
+                        <input type="range" min="5" max="40" value="20" class="population-slider" id="carnivores-slider">
+                        <div class="species-info">Secondary Consumers: Eat herbivores</div>
+                    </div>
+                    
+                    <div class="species-card" data-species="decomposers">
+                        <div class="species-icon">🍄</div>
+                        <div class="species-name">Decomposers</div>
+                        <div class="population-value"><span id="decomposers-value">25</span></div>
+                        <input type="range" min="5" max="50" value="25" class="population-slider" id="decomposers-slider">
+                        <div class="species-info">Recyclers: Break down dead matter</div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button class="simulate-btn" onclick="simulateRound()">Simulate Round</button>
+                    <button class="reset-btn" onclick="resetGame()">Reset Game</button>
+                </div>
+                
+                <div class="event-log" id="event-log">
+                    <div class="event">Welcome to Ecosystem Simulator! Adjust populations and click "Simulate Round" to begin.</div>
+                </div>
+            </div>
+            
+            <div class="info-panel">
+                <h3>Food Chain & Ecosystem Relationships</h3>
+                <div class="food-chain">
+                    <div class="food-chain-item">
+                        <h4>Sun</h4>
+                        <p>Energy Source</p>
+                    </div>
+                    <div class="food-chain-item">
+                        <h4>Producers (Plants)</h4>
+                        <p>Convert sunlight to energy</p>
+                    </div>
+                    <div class="food-chain-item">
+                        <h4>Consumers (Herbivores)</h4>
+                        <p>Eat plants</p>
+                    </div>
+                    <div class="food-chain-item">
+                        <h4>Consumers (Carnivores)</h4>
+                        <p>Eat herbivores</p>
+                    </div>
+                    <div class="food-chain-item">
+                        <h4>Decomposers</h4>
+                        <p>Recycle nutrients</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        const gameState = {
+            round: 1,
+            health: 100,
+            populations: {
+                plants: 50,
+                herbivores: 30,
+                carnivores: 20,
+                decomposers: 25
+            },
+            maxPopulations: {
+                plants: 100,
+                herbivores: 60,
+                carnivores: 40,
+                decomposers: 50
+            }
+        };
+
+        // Initialize the game
+        function initGame() {
+            // Set up slider event listeners
+            document.getElementById('plants-slider').addEventListener('input', function() {
+                updatePopulation('plants', this.value);
+            });
+            
+            document.getElementById('herbivores-slider').addEventListener('input', function() {
+                updatePopulation('herbivores', this.value);
+            });
+            
+            document.getElementById('carnivores-slider').addEventListener('input', function() {
+                updatePopulation('carnivores', this.value);
+            });
+            
+            document.getElementById('decomposers-slider').addEventListener('input', function() {
+                updatePopulation('decomposers', this.value);
+            });
+            
+            // Initial render
+            renderEcosystem();
+            updateUI();
+        }
+
+        // Update population value
+        function updatePopulation(species, value) {
+            gameState.populations[species] = parseInt(value);
+            document.getElementById(`${species}-value`).textContent = value;
+            renderEcosystem();
+        }
+
+        // Render the ecosystem visualization
+        function renderEcosystem() {
+            const ecosystem = document.getElementById('ecosystem');
+            ecosystem.innerHTML = '';
+            
+            // Add species to the ecosystem visualization
+            for (const species in gameState.populations) {
+                const count = Math.max(1, Math.floor(gameState.populations[species] / 10));
+                
+                for (let i = 0; i < count; i++) {
+                    const element = document.createElement('div');
+                    element.className = 'species';
+                    element.style.left = `${10 + Math.random() * 80}%`;
+                    element.style.top = `${10 + Math.random() * 80}%`;
+                    
+                    switch(species) {
+                        case 'plants':
+                            element.innerHTML = '🌿';
+                            element.style.color = '#27ae60';
+                            break;
+                        case 'herbivores':
+                            element.innerHTML = '🐇';
+                            element.style.color = '#95a5a6';
+                            break;
+                        case 'carnivores':
+                            element.innerHTML = '🦊';
+                            element.style.color = '#e67e22';
+                            break;
+                        case 'decomposers':
+                            element.innerHTML = '🍄';
+                            element.style.color = '#8e44ad';
+                            break;
+                    }
+                    
+                    ecosystem.appendChild(element);
+                }
+            }
+        }
+
+        // Simulate a round of ecosystem changes
+        function simulateRound() {
+            const oldPopulations = {...gameState.populations};
+            
+            // Ecosystem interactions
+            // Herbivores eat plants
+            const plantConsumption = Math.min(
+                gameState.populations.plants * 0.2,
+                gameState.populations.herbivores * 0.3
+            );
+            gameState.populations.plants -= plantConsumption;
+            gameState.populations.herbivores += plantConsumption * 0.1;
+            
+            // Carnivores eat herbivores
+            const herbivoreConsumption = Math.min(
+                gameState.populations.herbivores * 0.2,
+                gameState.populations.carnivores * 0.4
+            );
+            gameState.populations.herbivores -= herbivoreConsumption;
+            gameState.populations.carnivores += herbivoreConsumption * 0.1;
+            
+            // Decomposers recycle
+            const decomposition = (plantConsumption * 0.2) + (herbivoreConsumption * 0.3);
+            gameState.populations.decomposers += decomposition * 0.2;
+            gameState.populations.plants += decomposition * 0.5;
+            
+            // Natural growth and death
+            gameState.populations.plants += gameState.populations.plants * 0.1;
+            gameState.populations.herbivores -= gameState.populations.herbivores * 0.05;
+            gameState.populations.carnivores -= gameState.populations.carnivores * 0.07;
+            gameState.populations.decomposers -= gameState.populations.decomposers * 0.03;
+            
+            // Apply constraints
+            for (const species in gameState.populations) {
+                gameState.populations[species] = Math.max(0, 
+                    Math.min(gameState.populations[species], gameState.maxPopulations[species])
+                );
+            }
+            
+            // Calculate ecosystem health
+            calculateHealth();
+            
+            // Log events
+            logEvent(`Round ${gameState.round} completed. Populations changed.`);
+            
+            // Update UI
+            updateUI();
+            renderEcosystem();
+            
+            // Update sliders
+            document.getElementById('plants-slider').value = gameState.populations.plants;
+            document.getElementById('herbivores-slider').value = gameState.populations.herbivores;
+            document.getElementById('carnivores-slider').value = gameState.populations.carnivores;
+            document.getElementById('decomposers-slider').value = gameState.populations.decomposers;
+            
+            // Next round
+            gameState.round++;
+            document.getElementById('round').textContent = gameState.round;
+            
+            // Check for game over
+            if (gameState.health <= 0) {
+                logEvent("Game Over! The ecosystem has collapsed.");
+                document.querySelector('.simulate-btn').disabled = true;
+            }
+        }
+
+        // Calculate ecosystem health
+        function calculateHealth() {
+            // Health is based on population balance
+            const idealRatios = {
+                plants: 0.4,
+                herbivores: 0.3,
+                carnivores: 0.2,
+                decomposers: 0.1
+            };
+            
+            let totalPopulation = 0;
+            for (const species in gameState.populations) {
+                totalPopulation += gameState.populations[species];
+            }
+            
+            let balanceScore = 0;
+            for (const species in gameState.populations) {
+                const actualRatio = gameState.populations[species] / totalPopulation;
+                balanceScore += Math.max(0, 1 - Math.abs(actualRatio - idealRatios[species]) / idealRatios[species]);
+            }
+            
+            // Health is average of balance score (0-1) converted to percentage
+            gameState.health = Math.max(0, Math.min(100, (balanceScore / 4) * 100));
+        }
+
+        // Update the UI with current values
+        function updateUI() {
+            // Update population values
+            for (const species in gameState.populations) {
+                document.getElementById(`${species}-value`).textContent = 
+                    Math.round(gameState.populations[species]);
+            }
+            
+            // Update health display
+            document.getElementById('health-value').textContent = Math.round(gameState.health);
+            document.getElementById('health-bar').style.width = `${gameState.health}%`;
+            
+            // Update health bar color based on health
+            if (gameState.health > 70) {
+                document.getElementById('health-bar').style.background = 'linear-gradient(90deg, #27ae60, #2ecc71)';
+            } else if (gameState.health > 30) {
+                document.getElementById('health-bar').style.background = 'linear-gradient(90deg, #f39c12, #f1c40f)';
+            } else {
+                document.getElementById('health-bar').style.background = 'linear-gradient(90deg, #e74c3c, #c0392b)';
+            }
+        }
+
+        // Log events to the event log
+        function logEvent(message) {
+            const eventLog = document.getElementById('event-log');
+            const eventElement = document.createElement('div');
+            eventElement.className = 'event';
+            eventElement.textContent = message;
+            eventLog.appendChild(eventElement);
+            eventLog.scrollTop = eventLog.scrollHeight;
+        }
+
+        // Reset the game
+        function resetGame() {
+            gameState.round = 1;
+            gameState.health = 100;
+            gameState.populations = {
+                plants: 50,
+                herbivores: 30,
+                carnivores: 20,
+                decomposers: 25
+            };
+            
+            document.getElementById('round').textContent = gameState.round;
+            document.querySelector('.simulate-btn').disabled = false;
+            
+            // Reset sliders
+            document.getElementById('plants-slider').value = gameState.populations.plants;
+            document.getElementById('herbivores-slider').value = gameState.populations.herbivores;
+            document.getElementById('carnivores-slider').value = gameState.populations.carnivores;
+            document.getElementById('decomposers-slider').value = gameState.populations.decomposers;
+            
+            // Clear event log
+            document.getElementById('event-log').innerHTML = '';
+            logEvent("Game reset. Adjust populations and click 'Simulate Round' to begin.");
+            
+            // Update UI
+            updateUI();
+            renderEcosystem();
+        }
+
+        // Initialize the game when page loads
+        window.onload = initGame;
+    </script>
+</body>
+</html>
